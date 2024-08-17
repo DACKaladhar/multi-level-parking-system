@@ -1,0 +1,75 @@
+.App {
+  text-align: center;
+  overflow-x: auto; /* Ensure horizontal scroll is available */
+  white-space: nowrap; /* Prevent buttons from wrapping */
+  padding: 20px;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.input-group label {
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.input-group input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+  text-align: center;
+}
+
+.input-group input:focus {
+  border-color: #6666ff;
+  outline: none;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+
+.button-row {
+  white-space: nowrap; /* Prevent the row from wrapping */
+}
+
+.square-button {
+  border: 2px solid rgb(102, 149, 224); /* Hollow border */
+  background-color: transparent; /* Hollow background */
+  color: black; /* Text color */
+  padding: 10px; /* Padding inside button */
+  margin: 5px; /* Margin around button */
+  cursor: pointer;
+  font-size: 15px; /* Font size */
+  min-width: 50px; /* Minimum width to accommodate 1, 2, 3 digit numbers */
+  min-height: 10px; /* Minimum height to ensure uniformity */
+  text-align: center; /* Center text horizontally */
+  line-height: 10px; /* Center text vertically */
+  outline: none; /* Remove default outline */
+  border-radius: 5px; /* Optional: Rounded corners */
+  display: inline-block; /* Ensure buttons are in a single line */
+  white-space: nowrap; /* Prevent wrapping inside the button */
+}
+
+.square-button.deSelected {
+  background-color: transparent; /* Fill color when selected */
+  border: 1px solid rgb(191, 190, 190); /* Hollow border */
+  color: rgb(191, 190, 190); /* Text color when selected */
+}

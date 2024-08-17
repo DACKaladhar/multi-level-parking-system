@@ -1,0 +1,7 @@
+@import url(./App.css);
+
+.square-button.disappear {
+  background-color: transparent; /* Fill color when selected */
+  border: transparent;
+  pointer-events: none;
+}
