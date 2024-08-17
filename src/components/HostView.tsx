@@ -4,6 +4,7 @@ export const HostView = () => {
   return (
     <>
       <h1>Hey this is host view</h1>
+      <h2>This is for testing purpose</h2>
     </>
   );
 };
