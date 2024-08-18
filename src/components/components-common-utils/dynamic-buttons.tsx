@@ -13,11 +13,13 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
   const [buildings, setBuildings] = useState<string[]>(
     generateBuildingArray(totalBuildings)
   );
+  const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
 
   // Function to add a new building
   const addBuilding = () => {
     const newBuilding = `Building ${buildings.length + 1}`;
     setBuildings([...buildings, newBuilding]);
+    setSelectedBuildingIndex(buildings.length);
   };
 
   return (
@@ -26,13 +28,14 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
         id="dynamicBuildingDropdown"
         name="dynamicBuildingDropdown"
         onChange={(e) => {
-          if (e.target.value === "addBuilding") {
-            addBuilding();
-          }
+          e.target.value === "addBuilding"
+            ? addBuilding()
+            : setSelectedBuildingIndex(parseInt(e.target.value));
         }}
+        value={selectedBuildingIndex}
       >
         {buildings.map((building, index) => (
-          <option key={index} value={building.toLowerCase().replace(" ", "")}>
+          <option key={index} value={index}>
             {building}
           </option>
         ))}
