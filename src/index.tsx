@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { ConfigureRowColSlots } from "./components/ConfigureRowColSlots";
+import { ConfigurablePanelBody } from "./components/ConfigurablePanelBody";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <ConfigureRowColSlots />
+    <ConfigurablePanelBody />
   </React.StrictMode>
 );
