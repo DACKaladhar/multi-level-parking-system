@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { App } from "./components/App";
+import { ConfigureRowColSlots } from "./components/ConfigureRowColSlots";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ConfigureRowColSlots />
   </React.StrictMode>
 );

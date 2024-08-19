@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../components-styles/App.css";
-import { AvailableParkingSlotsView } from "./SelectedButtonsView";
+import "../components-styles/ConfigureRowColSlots.css";
+import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
 
 interface IDisplayConfigurableSlots {
   rows: number;
@@ -9,7 +9,7 @@ interface IDisplayConfigurableSlots {
   handleConfigurableSlotClick: (index: number) => void;
 }
 
-export const App = () => {
+export const ConfigureRowColSlots = () => {
   const [rows, setRows] = useState<number>(0);
   const [cols, setCols] = useState<number>(0);
   const [submitted, setSubmitted] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export const App = () => {
   }
 
   return (
-    <div className="App">
+    <div className="ConfigureRowColSlots">
       <h1>Configure your parking slots</h1>
       <div className="input-container">
         <div className="input-group">

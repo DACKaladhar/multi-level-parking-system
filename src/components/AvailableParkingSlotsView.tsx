@@ -1,7 +1,7 @@
 import React from "react";
-import "../components-styles/SelectedButtonsView.css";
+import "../components-styles/AvailableSlotsView.css";
 
-interface ISelectedButtonsViewProps {
+interface IAvailableSlotsViewProps {
   rows: number;
   cols: number;
   unavailableSlots: boolean[];
@@ -12,7 +12,7 @@ interface ISelectedButtonsViewProps {
  * @param unavailableSlots - Boolean array indicating unavailable slots.
  * @returns A grid of Available Parking Slots
  */
-export const AvailableParkingSlotsView: React.FC<ISelectedButtonsViewProps> = ({
+export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   rows,
   cols,
   unavailableSlots,
@@ -42,7 +42,7 @@ export const AvailableParkingSlotsView: React.FC<ISelectedButtonsViewProps> = ({
   }
 
   return (
-    <div className="App">
+    <div className="ConfigureRowColSlots">
       <h1>Available Parking Slots</h1>
       <div>
         {buttons.length > 0 ? buttons : <p>Please Configure parking slots.</p>}
