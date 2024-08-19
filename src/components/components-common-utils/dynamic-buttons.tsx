@@ -1,23 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export interface IBuildingDropdown {
   canAddBuilding?: boolean;
   totalBuildings?: number;
+  onBuildingChange?: (selectedBuilding: number, totalBuildings: number) => void;
 }
 
 export interface IFloorDropdown {
   canAddFloor?: boolean;
   totalFloors?: number;
+  selectedFloor?: number;
+  onFloorChange?: (selectedFloor: number, totalFloors: number) => void;
 }
 
 /**
  * @param canAddBuilding - Enables BuildingDropdown to add new buildings
  * @param totalBuildings - Start with default totalBuildings number of buildings
+ * @param onBuildingChange - Callback for parent to see the selected building and total buildings created
  * @returns - A Building Dropdown component which has ability to add new buildings or just select existing buildings
  */
 export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
   canAddBuilding = false, // Set default value to false if not passed
   totalBuildings = 1,
+  onBuildingChange,
 }) => {
   // State to keep track of the buildings
   const [buildings, setBuildings] = useState<string[]>(
@@ -30,6 +35,18 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
     const newBuilding = `Building ${buildings.length + 1}`;
     setBuildings([...buildings, newBuilding]);
     setSelectedBuildingIndex(buildings.length);
+    onBuildingChange?.(buildings.length, buildings.length + 1);
+  };
+
+  const handleBuildingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === "addBuilding") {
+      addBuilding();
+    } else {
+      const index = parseInt(value);
+      setSelectedBuildingIndex(index);
+      onBuildingChange?.(index, buildings.length);
+    }
   };
 
   return (
@@ -37,11 +54,7 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
       <select
         id="dynamicBuildingDropdown"
         name="dynamicBuildingDropdown"
-        onChange={(e) => {
-          e.target.value === "addBuilding"
-            ? addBuilding()
-            : setSelectedBuildingIndex(parseInt(e.target.value));
-        }}
+        onChange={handleBuildingChange}
         value={selectedBuildingIndex}
       >
         {buildings.map((building, index) => (
@@ -67,11 +80,15 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
 /**
  * @param canAddFloor - Enables FloorDropdown to add new floors
  * @param totalFloors - Start with default totalFloor number of floors
+ * @param onFloorChange - Callback for parent to see the selected floor and total floors created
+ * @param selectedFloor - Exclusively used to re-render dropdown, when new selectedFloorIndex is being sent typically ( when new building is added or selected)
  * @returns - A FLoor Dropdown component which has ability to add new floors or just select existing floors
  */
 export const FloorDropdown: React.FC<IFloorDropdown> = ({
   canAddFloor = false, // Set default value to false if not passed
   totalFloors = 1,
+  onFloorChange,
+  selectedFloor = 0,
 }) => {
   // State to keep track of the buildings
   const [floors, setFloors] = useState<string[]>(
@@ -79,11 +96,28 @@ export const FloorDropdown: React.FC<IFloorDropdown> = ({
   );
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
 
-  // Function to add a new building
+  // Update selectedFloorIndex when selectedFloor prop changes
+  useEffect(() => {
+    setSelectedFloorIndex(selectedFloor);
+    setFloors(generateFloorArray(totalFloors));
+  }, [selectedFloor, totalFloors]);
+
   const addFloor = () => {
     const newFloor = `Floor ${floors.length + 1}`;
     setFloors([...floors, newFloor]);
     setSelectedFloorIndex(floors.length);
+    onFloorChange?.(floors.length, floors.length + 1);
+  };
+
+  const handleFloorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === "addFloor") {
+      addFloor();
+    } else {
+      const index = parseInt(value);
+      setSelectedFloorIndex(index);
+      onFloorChange?.(index, floors.length);
+    }
   };
 
   return (
@@ -91,11 +125,7 @@ export const FloorDropdown: React.FC<IFloorDropdown> = ({
       <select
         id="dynamicFloorDropdown"
         name="dynamicFloorDropdown"
-        onChange={(e) => {
-          e.target.value === "addFloor"
-            ? addFloor()
-            : setSelectedFloorIndex(parseInt(e.target.value));
-        }}
+        onChange={handleFloorChange}
         value={selectedFloorIndex}
       >
         {floors.map((floor, index) => (
