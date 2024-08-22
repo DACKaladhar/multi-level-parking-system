@@ -44,3 +44,42 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Elaborated and paraphrased version of project description:
+
+**Project Overview:**
+I’m developing a React + TypeScript application tailored for managing multilevel parking systems in large multinational corporations (MNCs). This app is designed to support a variety of vehicle types, including 2/3-wheelers, special vehicles, dual parking, and electric vehicles. Key features include slot booking, real-time updates, maintenance management, data analytics on parking demand, and much more! Contributions to this project are highly encouraged.
+
+**Problem Solved:**
+This app is specifically designed for MNCs with structured and organized parking areas where employees follow systematic parking protocols. The application addresses several critical issues:
+
+1. **Efficient Electric Vehicle Parking Management:** Given the limited availability of electric parking slots, this app maximizes the utilization of available spaces by implementing a timely booking system. This ensures that all electric vehicles are accommodated efficiently.
+  
+2. **Seamless Communication of Parking Updates:** Companies can provide regular updates regarding their parking facilities, such as maintenance activities or availability, through the app in a visually appealing and user-friendly manner. This keeps employees informed and engaged.
+
+3. **Enhanced Employee Engagement:** The app fosters a closer connection between the company and its employees by allowing employees to monitor the status of their vehicles in real time. This includes updates on parking status, charging progress, and more.
+
+4. **Streamlined Vehicle Management:** The app minimizes the effort required by employees to manage their vehicles. The company’s administrative panel, guided by the application, takes care of everything from booking to charging, allowing employees to focus on their work without worrying about their vehicles.
+
+**Learning and Development:**
+I initiated this project immediately after completing my internship at Microsoft, aiming to apply the skills and knowledge I gained during my time there. My focus areas include:
+
+1. **Writing Production-Level Code:** Ensuring that the codebase is of high quality and suitable for deployment in a real-world environment.
+  
+2. **Creating Highly Reusable Components:** Developing modular and reusable components that can be easily integrated and adapted for future needs.
+
+3. **Ensuring Easy Refactoring and Code Quality:** Writing clean, maintainable code that is easy to refactor and adheres to best practices in terms of quality and reliability.
+
+4. **Focusing on Performance:** Optimizing the app for performance to ensure it runs smoothly even under heavy usage.
+
+5. **Implementing Telemetry and Business Intelligence (BI):** Utilizing dashboards and other tools to monitor the app’s performance and user behavior, providing valuable insights for future improvements.
+
+6. **Adopting Strong Version Control and Code Review Practices:** Managing the project with a focus on perfecting git version control, conducting thorough code reviews, and maintaining a clean and organized repository.
+
+7. **Documenting Technical and Design Aspects:** Creating detailed technical and design documentation to ensure clarity and ease of understanding for all team members.
+
+8. **Following Agile Methodology:** Implementing Agile principles to manage the project efficiently, ensuring continuous improvement and adaptability throughout the development process.
+
+9. **Conducting Unit Testing:** Validating the functionality of the app through comprehensive unit testing to maintain high standards of reliability and performance.
+
+As the lead of this project, my goal is to develop a production-grade application while enhancing my learning curve by gaining practical experience in building an app from scratch. I am also involving pre-final year students and inviting friends to contribute, fostering a collaborative environment where we can all gain valuable experience in teamwork and communication. By following rigorous software development principles, including design documentation, regular meetings, bug bashes, and unit test validation, I aim to build a robust, production-ready application. I plan to incorporate scenario markers and monitor them using dashboards to ensure the app meets production standards.
