@@ -3,7 +3,15 @@ import {
   BuildingDropdown,
   FloorDropdown,
 } from "./components-common-utils/dynamic-buttons";
-import { ConfigureRowColSlots } from "./ConfigureRowColSlots";
+import {
+  ConfigureRowColSlots,
+  IConfigureRowColSlots,
+} from "./ConfigureRowColSlots";
+export interface IParkingSlotsDB {
+  rows: number;
+  cols: number;
+  slots: boolean[];
+}
 
 /**
  * follow ups-
@@ -22,14 +30,15 @@ import { ConfigureRowColSlots } from "./ConfigureRowColSlots";
  *
  */
 
-export const ConfigurablePanelBody = () => {
-  // const [slotsDB, setSlotsDB] = useState<number[][][]>([[[1]]])
-  // const [rowsCols, setRowsCols] = useState<number[][][]>([[[]]])
+export const CreatorPanel = () => {
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
   const [totalBuildings, setTotalBuildings] = useState<number>(1);
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
   const [totalFloors, setTotalFloors] = useState<number>(1);
   const [buildingMapsFloor, setBuildingMapsFloor] = useState<number[]>([1]);
+  const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>([
+    [{ rows: 0, cols: 0, slots: [] }],
+  ]);
 
   const handleBuildingChange = (buildingIndex: number, total: number) => {
     setSelectedBuildingIndex(buildingIndex);
@@ -41,9 +50,32 @@ export const ConfigurablePanelBody = () => {
       const updatedB2f = [...buildingMapsFloor];
       updatedB2f.push(1); // Default to 1 floor for a new building
       setBuildingMapsFloor(updatedB2f);
+      const updatedParkingSlotsDB = [
+        ...parkingSlotsDB,
+        [{ rows: 0, cols: 0, slots: [] }],
+      ];
+      setParkingSlotsDB(updatedParkingSlotsDB);
+      setSelectedBuildingFloorSlots({
+        savedRows: 0,
+        savedCols: 0,
+        callbackOnSave: handleSlotsSaveButton,
+        building: buildingIndex,
+        floor: 0,
+        slotsDB: updatedParkingSlotsDB,
+      });
     } else {
+      // changing new building should make floor index default to 0
       setTotalFloors(buildingMapsFloor[buildingIndex]);
       setSelectedFloorIndex(0);
+      const currentSlot: IParkingSlotsDB = parkingSlotsDB[buildingIndex][0];
+      setSelectedBuildingFloorSlots({
+        savedRows: currentSlot.rows,
+        savedCols: currentSlot.cols,
+        callbackOnSave: handleSlotsSaveButton,
+        building: buildingIndex,
+        floor: 0,
+        slotsDB: parkingSlotsDB,
+      });
     }
   };
 
@@ -51,11 +83,61 @@ export const ConfigurablePanelBody = () => {
     setSelectedFloorIndex(floorIndex);
     setTotalFloors(total);
     if (floorIndex + 1 > totalFloors) {
+      // new floor is being added
       const updatedB2f = [...buildingMapsFloor];
       updatedB2f[selectedBuildingIndex] += 1; // Default to 1 floor for a new building
       setBuildingMapsFloor(updatedB2f);
+      const updatedParkingSlotsDB = [...parkingSlotsDB];
+      updatedParkingSlotsDB[selectedBuildingIndex].push({
+        rows: 0,
+        cols: 0,
+        slots: [],
+      });
+      setParkingSlotsDB(updatedParkingSlotsDB);
+      setSelectedBuildingFloorSlots({
+        savedRows: 0,
+        savedCols: 0,
+        callbackOnSave: handleSlotsSaveButton,
+        building: selectedBuildingIndex,
+        floor: floorIndex,
+        slotsDB: updatedParkingSlotsDB,
+      });
+    } else {
+      const currentSlot: IParkingSlotsDB =
+        parkingSlotsDB[selectedBuildingIndex][floorIndex];
+      setSelectedBuildingFloorSlots({
+        savedRows: currentSlot.rows,
+        savedCols: currentSlot.cols,
+        callbackOnSave: handleSlotsSaveButton,
+        building: selectedBuildingIndex,
+        floor: floorIndex,
+        slotsDB: parkingSlotsDB,
+      });
     }
   };
+
+  const handleSlotsSaveButton = (
+    row: number,
+    col: number,
+    slotsDB: IParkingSlotsDB[][],
+    building: number,
+    floor: number
+  ) => {
+    // UNSOLVED BUILDING PROBLEM! - just add buildings and use Save button, I can see parkingSlots for the latest building is not being appended in the parkingSlotsDB
+    // Set the updated parkingSlotsDB state to trigger a re-render
+    setParkingSlotsDB(slotsDB);
+  };
+
+  // NEED DESCRIPTION ABOUT THIS
+  const [selectedBuildingFloorSlots, setSelectedBuildingFloorSlots] =
+    useState<IConfigureRowColSlots>({
+      savedRows: 0,
+      savedCols: 0,
+      callbackOnSave: handleSlotsSaveButton,
+      building: selectedBuildingIndex,
+      floor: selectedFloorIndex,
+      slotsDB: parkingSlotsDB,
+    });
 
   return (
     <>
@@ -78,10 +160,6 @@ export const ConfigurablePanelBody = () => {
             selectedFloor={selectedFloorIndex}
             totalFloors={totalFloors}
           />
-          <h3>selected building - {selectedBuildingIndex}</h3>
-          <h3>selected floor - {selectedFloorIndex}</h3>
-          <h4>total bulidings - {totalBuildings}</h4>
-          <h4>total floors - {totalFloors}</h4>
         </div>
         <div
           style={{
@@ -91,7 +169,9 @@ export const ConfigurablePanelBody = () => {
           }}
         ></div>
       </nav>
-      <ConfigureRowColSlots />
+      <ConfigureRowColSlots
+        selectedBuildingFloorSlots={selectedBuildingFloorSlots}
+      />
     </>
   );
 };
