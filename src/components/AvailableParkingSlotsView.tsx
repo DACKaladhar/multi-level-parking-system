@@ -44,8 +44,14 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   return (
     <div className="ConfigureRowColSlots">
       <h1>Available Parking Slots</h1>
-      <div>
-        {buttons.length > 0 ? buttons : <p>Please Configure parking slots.</p>}
+      <div className="button-row">
+        <div className="unique-div">
+          {buttons.length > 0 ? (
+            buttons
+          ) : (
+            <p>Please Configure parking slots.</p>
+          )}
+        </div>
       </div>
     </div>
   );
