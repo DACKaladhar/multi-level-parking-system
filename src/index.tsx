@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { CreatorPanel } from "./components/CreatorPanel";
+import { CompanyPanel } from "./components/company-panel";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <CreatorPanel />
+    <CompanyPanel />
   </React.StrictMode>
 );

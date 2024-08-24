@@ -13,6 +13,12 @@ export interface IParkingSlotsDB {
   slots: boolean[];
 }
 
+export interface ICreatorPanel {
+  parkingSlotsDB: IParkingSlotsDB[][];
+  setParkingSlotsDB: React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>;
+  handleSubmission: (db: IParkingSlotsDB[][]) => void;
+}
+
 /**
  * follow ups-
  * have a DB<useState> storing [buildingIndex, floorIndex, rows, cols, deselectedParkingSlots]
@@ -30,15 +36,20 @@ export interface IParkingSlotsDB {
  *
  */
 
-export const CreatorPanel = () => {
+export const CreatorPanel: React.FC<ICreatorPanel> = ({
+  parkingSlotsDB,
+  setParkingSlotsDB,
+  handleSubmission,
+}) => {
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
-  const [totalBuildings, setTotalBuildings] = useState<number>(1);
+  const [totalBuildings, setTotalBuildings] = useState<number>(
+    parkingSlotsDB.length
+  );
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
-  const [totalFloors, setTotalFloors] = useState<number>(1);
+  const [totalFloors, setTotalFloors] = useState<number>(
+    parkingSlotsDB[0].length
+  );
   const [buildingMapsFloor, setBuildingMapsFloor] = useState<number[]>([1]);
-  const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>([
-    [{ rows: 0, cols: 0, slots: [] }],
-  ]);
 
   const handleBuildingChange = (buildingIndex: number, total: number) => {
     setSelectedBuildingIndex(buildingIndex);
@@ -142,7 +153,7 @@ export const CreatorPanel = () => {
   return (
     <>
       <h1 style={{ color: "Red", fontSize: "1.5rem" }}>
-        Configurable Panel Body is under development!
+        Creator Panel Body is under development!
       </h1>
       <h5>
         -need an integration between "[floor, building] dropdowns" and
@@ -150,16 +161,19 @@ export const CreatorPanel = () => {
       </h5>
       <nav>
         <div>
-          <BuildingDropdown
-            canAddBuilding={true}
-            onBuildingChange={handleBuildingChange}
-          />
-          <FloorDropdown
-            canAddFloor={true}
-            onFloorChange={handleFloorChange}
-            selectedFloor={selectedFloorIndex}
-            totalFloors={totalFloors}
-          />
+          <>
+            <BuildingDropdown
+              canAddBuilding={true}
+              onBuildingChange={handleBuildingChange}
+              totalBuildings={totalBuildings}
+            />
+            <FloorDropdown
+              canAddFloor={true}
+              onFloorChange={handleFloorChange}
+              selectedFloor={selectedFloorIndex}
+              totalFloors={totalFloors}
+            />
+          </>
         </div>
         <div
           style={{
@@ -171,6 +185,7 @@ export const CreatorPanel = () => {
       </nav>
       <ConfigureRowColSlots
         selectedBuildingFloorSlots={selectedBuildingFloorSlots}
+        onSubmission={handleSubmission}
       />
     </>
   );
