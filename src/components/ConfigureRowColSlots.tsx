@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "../components-styles/ConfigureRowColSlots.css";
-import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
 import { IParkingSlotsDB } from "./CreatorPanel";
 
 export interface IConfigureRowColSlots {
@@ -16,7 +15,6 @@ export interface IConfigureRowColSlots {
     floor: number
   ) => void;
   slotsDB: IParkingSlotsDB[][];
-  submittedCallback?: (db: IParkingSlotsDB) => void;
 }
 interface IDisplayConfigurableSlotsProps {
   rows: number;
@@ -27,7 +25,8 @@ interface IDisplayConfigurableSlotsProps {
 
 export const ConfigureRowColSlots: React.FC<{
   selectedBuildingFloorSlots: IConfigureRowColSlots;
-}> = ({ selectedBuildingFloorSlots }) =>
+  onSubmission: (db: IParkingSlotsDB[][]) => void; // New prop
+}> = ({ selectedBuildingFloorSlots, onSubmission }) =>
   // rows,
   // cols, ee rendu pampali so that
   // saved (hook): boolean, decides state of save button,
@@ -37,7 +36,6 @@ export const ConfigureRowColSlots: React.FC<{
   {
     const [rows, setRows] = useState<number>(0);
     const [cols, setCols] = useState<number>(0);
-    const [submitted, setSubmitted] = useState<boolean>(false);
     const [instantParkingSlots, setInstantParkingSlots] = useState<boolean[]>(
       []
     );
@@ -77,7 +75,7 @@ export const ConfigureRowColSlots: React.FC<{
     const handleSubmit = () => {
       const result = checkAllSaved(selectedBuildingFloorSlots.slotsDB);
       if (result[2] === 1) {
-        setSubmitted(true);
+        onSubmission(selectedBuildingFloorSlots.slotsDB);
       } else {
         // result is [i, j], where i is row and j is column
         const [i, j] = [result[0], result[1]];
@@ -137,17 +135,6 @@ export const ConfigureRowColSlots: React.FC<{
       selectedBuildingFloorSlots.floor,
       selectedBuildingFloorSlots.slotsDB,
     ]);
-
-    if (submitted) {
-      // Change the logic and handle the callback in Creator panel
-      return (
-        <AvailableParkingSlotsView
-          rows={rows}
-          cols={cols}
-          unavailableSlots={instantParkingSlots}
-        />
-      );
-    }
 
     return (
       <div className="ConfigureRowColSlots">
