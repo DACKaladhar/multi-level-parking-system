@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../components-styles/ConfigureRowColSlots.css";
 import { IParkingSlotsDB } from "./CreatorPanel";
-
 export interface IConfigureRowColSlots {
   savedRows: number;
   savedCols: number;
@@ -23,9 +22,19 @@ interface IDisplayConfigurableSlotsProps {
   handleConfigurableSlotClick: (index: number) => void;
 }
 
+/**
+ * Component for configuring parking slots by selecting rows and columns
+ * for a specific building and floor.
+ *
+ * @param {IConfigureRowColSlots} selectedBuildingFloorSlots - The selected building and floor configuration, including saved rows, columns, and parking slots database.
+ * @param {(db: IParkingSlotsDB[][]) => void} onSubmission - Callback function to pass updated parkingSlotsDB to CreatorPanel.
+ *
+ * @returns {JSX.Element} The rendered component for configuring parking slots.
+ */
+
 export const ConfigureRowColSlots: React.FC<{
   selectedBuildingFloorSlots: IConfigureRowColSlots;
-  onSubmission: (db: IParkingSlotsDB[][]) => void; // New prop
+  onSubmission: (db: IParkingSlotsDB[][]) => void;
 }> = ({ selectedBuildingFloorSlots, onSubmission }) =>
   // rows,
   // cols, ee rendu pampali so that
