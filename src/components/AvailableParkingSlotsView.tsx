@@ -89,7 +89,7 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
               <FloorDropdown
                 canAddFloor={false}
                 onFloorChange={handleFloorChange}
-                selectedFloor={selectedBuildingIndex}
+                selectedFloor={selectedFloorIndex}
                 totalFloors={parkingSlotsDB[selectedBuildingIndex].length}
               />
               {buttons}
