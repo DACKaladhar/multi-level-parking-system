@@ -20,20 +20,16 @@ export interface ICreatorPanel {
 }
 
 /**
- * follow ups-
- * have a DB<useState> storing [buildingIndex, floorIndex, rows, cols, deselectedParkingSlots]
- * Re-render new @component ConfigureRowColSlots on floor or building change
- * render save && configure button in ConfigureRowColSlots
+ * The CreatorPanel component is responsible for managing and configuring parking slots
+ * across multiple buildings and floors. It integrates with dropdowns for building and floor selection,
+ * and re-renders the ConfigureRowColSlots component when the selected building or floor changes.
  *
- * refactor ConfigureRowColSlots-
- * @render new configure button & save button
- * @prop deselectedParkingSlots, @prop setDeselectedParkingSlots for already saved parking slots
- * @prop row, @prop col- for displaying already saved parking slots
- * @callback save- takes function @params [row, col, deselectedParkingSlots] stores the data into DB
- * save button styling change if already saved and opened.
- * save button styling change if already saved state to edited.
- * @callback configure- should work only if building X floors are saved
+ * @param {ICreatorPanel} props - The props for the component.
+ * @param {IParkingSlotsDB[][]} props.parkingSlotsDB - The current state of the parking slots database.
+ * @param {React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>} props.setParkingSlotsDB - Function to update the parking slots database state.
+ * @param {(db: IParkingSlotsDB[][]) => void} props.handleSubmission - Callback function that passes the updated parkingSlotsDB to CopmanyPanel.
  *
+ * @returns {JSX.Element} The CreatorPanel component.
  */
 
 export const CreatorPanel: React.FC<ICreatorPanel> = ({
