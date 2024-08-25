@@ -11,6 +11,7 @@ export interface IParkingSlotsDB {
   rows: number;
   cols: number;
   slots: boolean[];
+  tempslots?: boolean[];
 }
 
 export interface ICreatorPanel {

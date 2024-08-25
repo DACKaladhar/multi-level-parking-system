@@ -51,7 +51,7 @@ export const ConfigureRowColSlots: React.FC<{
     const [alreadySaved, setAlreadySaved] = useState<boolean>(false);
     // for post submitted you can delete these
     const [timeoutText, setTimeoutText] = useState("");
-
+    const [isedited, setIsEdited] = useState<boolean>(false);
     const handleRowsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setAlreadySaved(false);
       const value = parseInt(event.target.value, 10);
@@ -71,6 +71,7 @@ export const ConfigureRowColSlots: React.FC<{
     };
 
     const handleConfigurableSlotClick = (index: number) => {
+      setIsEdited(true);
       if (alreadySaved) {
         setAlreadySaved(false);
       }
@@ -82,19 +83,22 @@ export const ConfigureRowColSlots: React.FC<{
     };
 
     const handleSubmit = () => {
-      const result = checkAllSaved(selectedBuildingFloorSlots.slotsDB);
-      if (result[2] === 1) {
-        onSubmission(selectedBuildingFloorSlots.slotsDB);
-      } else {
-        // result is [i, j], where i is row and j is column
-        const [i, j] = [result[0], result[1]];
-        setTimeoutText(
-          `Please save the slots for building ${i + 1} and floor ${j + 1}.`
-        );
+      if (!isedited) {
+        const result = checkAllSaved(selectedBuildingFloorSlots.slotsDB);
+        if (result[2] === 1) {
+          onSubmission(selectedBuildingFloorSlots.slotsDB);
+        } else {
+          // result is [i, j], where i is row and j is column
+          const [i, j] = [result[0], result[1]];
+          setTimeoutText(
+            `Please save the slots for building ${i + 1} and floor ${j + 1}.`
+          );
 
-        // Hide the text after 5 seconds (5000 ms)
-        setTimeout(() => setTimeoutText(""), 3000);
+          // Hide the text after 5 seconds (5000 ms)
+          setTimeout(() => setTimeoutText(""), 3000);
+        }
       }
+      setTimeoutText(`Please save all the slots.`);
     };
 
     const handleSaveButton = () => {
@@ -118,6 +122,7 @@ export const ConfigureRowColSlots: React.FC<{
       } else {
         console.log("Please configure the slots before saving");
       }
+      setIsEdited(false);
     };
 
     useEffect(() => {
