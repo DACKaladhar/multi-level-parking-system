@@ -1,0 +1,62 @@
+/* Overlay for the modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content container */
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh; /* Set max-height to enable vertical scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  z-index: 1001;
+}
+
+/* Modal header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 10px;
+}
+
+/* Modal body */
+.modal-body {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Modal footer */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #dee2e6;
+  padding-top: 10px;
+}
+
+/* Additional styling for sections inside the modal */
+.modal-section {
+  margin-bottom: 20px;
+}
+
+.modal-section h3 {
+  margin-bottom: 10px;
+}
+
+.modal-section label {
+  display: block;
+  margin-bottom: 5px;
+}

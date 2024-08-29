@@ -3,7 +3,7 @@
 .square-button.disappear {
   background-color: transparent; /* Fill color when selected */
   border: transparent;
-  pointer-events: none;
+  pointer-events: none; /* DON'T REMOVE THIS- will affect click on it in View State */
 }
 .unique-div {
   border: 3px solid #3498db; /* Bright border color */

@@ -66,6 +66,12 @@ h1 {
   border-radius: 5px; /* Optional: Rounded corners */
   display: inline-block; /* Ensure buttons are in a single line */
   white-space: nowrap; /* Prevent wrapping inside the button */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.square-button:hover {
+  transform: scale(1.05); /* Grow slightly on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
 }
 
 .square-button.deSelected {
