@@ -7,6 +7,7 @@ import {
   ConfigureRowColSlots,
   IConfigureRowColSlots,
 } from "./ConfigureRowColSlots";
+
 export interface IParkingSlotsDB {
   rows: number;
   cols: number;
@@ -45,7 +46,9 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
   const [totalFloors, setTotalFloors] = useState<number>(
     parkingSlotsDB[0].length
   );
-  const [buildingMapsFloor, setBuildingMapsFloor] = useState<number[]>([1]);
+  const [buildingMapsFloor, setBuildingMapsFloor] = useState<number[]>(
+    mapBuildingsToFloors(parkingSlotsDB)
+  );
 
   const handleBuildingChange = (buildingIndex: number, total: number) => {
     setSelectedBuildingIndex(buildingIndex);
@@ -185,4 +188,12 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       />
     </>
   );
+};
+
+const mapBuildingsToFloors = (db: IParkingSlotsDB[][]): number[] => {
+  const buildingMapsFloor: number[] = [];
+  for (let i = 0; i < db.length; i++) {
+    buildingMapsFloor.push(db[i].length);
+  }
+  return buildingMapsFloor;
 };

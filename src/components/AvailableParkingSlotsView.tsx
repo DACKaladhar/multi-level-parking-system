@@ -5,9 +5,21 @@ import {
   BuildingDropdown,
   FloorDropdown,
 } from "./components-common-utils/dynamic-buttons";
+import {
+  IMaintenanceSlot,
+  IMaintenanceSlotType,
+  VehicleType,
+} from "./components-common-utils/common-parking-slot.interface";
+
 interface IAvailableSlotsViewProps {
   parkingSlotsDB: IParkingSlotsDB[][];
-  onConfigure: () => void;
+  onConfigure?: () => void;
+  onSlotClick?: (
+    buildingIndex: number,
+    floorIndex: number,
+    slotNumber: number
+  ) => void;
+  maintenanceSlotsDB?: IMaintenanceSlot[][];
 }
 
 /**
@@ -24,6 +36,8 @@ interface IAvailableSlotsViewProps {
 export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   parkingSlotsDB,
   onConfigure,
+  onSlotClick,
+  maintenanceSlotsDB,
 }) => {
   // Hooks
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
@@ -62,8 +76,29 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
           className={`square-button ${
             unavailableSlots[index] ? "" : "disappear"
           }`}
+          onClick={() => {
+            onSlotClick &&
+              onSlotClick(selectedBuildingIndex, selectedFloorIndex, index);
+          }}
+          // `url("./public-assets/2wheeler-1.png")`
+          style={{
+            backgroundImage:
+              unavailableSlots[index] &&
+              maintenanceSlotsDB &&
+              maintenanceSlotsDB[selectedBuildingIndex][selectedFloorIndex]
+                .maintenanceSlots[index]
+                ? `url("${getImageUrl(
+                    maintenanceSlotsDB[selectedBuildingIndex][
+                      selectedFloorIndex
+                    ].maintenanceSlots[index]
+                  )}")`
+                : "none",
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
         >
-          {unavailableSlots[index] ? index + 1 : null}
+          {unavailableSlots[index] && maintenanceSlotsDB ? null : null}
         </button>
       );
     }
@@ -97,11 +132,30 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
           ) : (
             <>
               <p>Please Configure parking slots.</p>
-              <button onClick={onConfigure}>Add Slots</button>
+              {onConfigure && (
+                <button onClick={onConfigure}>Configure Slots</button>
+              )}
             </>
           )}
         </div>
       </div>
     </div>
   );
+};
+
+const getImageUrl = (slotTypeInfo: IMaintenanceSlotType) => {
+  switch (slotTypeInfo.vehicleType) {
+    case VehicleType.TwoWheeler:
+      return "../public-assets/2wheeler-1.png";
+    case VehicleType.FourWheeler:
+      return "../public-assets/4wheeler-3.png";
+    case VehicleType.Handicapped:
+      return "../public-assets/handicapped-1.png";
+    case VehicleType.CustomizedVehicle:
+      return "../public-assets/parkingP.png";
+    case VehicleType.Cab:
+      return "../public-assets/Cab-2.png";
+    default:
+      return ""; // Return an empty string or a default image path
+  }
 };

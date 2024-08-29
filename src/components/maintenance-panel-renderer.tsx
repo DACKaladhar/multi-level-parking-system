@@ -1,15 +1,24 @@
 import React, { useState } from "react";
-import {
-  BuildingDropdown,
-  FloorDropdown,
-} from "./components-common-utils/dynamic-buttons";
 import { IParkingSlotsDB } from "./CreatorPanel";
-import { IMaintenanceSlotType } from "./components-common-utils/common-parking-slot.interface";
+import {
+  IMaintenanceSlotType,
+  IMaintenanceSlot,
+} from "./components-common-utils/common-parking-slot.interface";
+import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
+import { MaintenanceModal } from "./maintenance-modal";
 
 interface IMaintenancePanel {
   parkingSlotsDB: IParkingSlotsDB[][];
-  maintenanceSlotsDB: IMaintenanceSlotType[][];
-  callbackOnEdit: () => void;
+  maintenanceSlotsDB: IMaintenanceSlot[][];
+  setMaintenanceSlotsDB: React.Dispatch<
+    React.SetStateAction<IMaintenanceSlot[][]>
+  >;
+  handleMaintenanceSave: (
+    maintenanceSlot: IMaintenanceSlotType,
+    buildingIndex: number,
+    floorIndex: number,
+    selectedSlot: number
+  ) => void;
 }
 /**
  * follow ups-
@@ -31,34 +40,48 @@ interface IMaintenancePanel {
 export const MaintenancePanel: React.FC<IMaintenancePanel> = ({
   parkingSlotsDB,
   maintenanceSlotsDB,
-  callbackOnEdit,
+  setMaintenanceSlotsDB,
+  handleMaintenanceSave,
 }) => {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedSlot, setSelectedSlot] = useState<number>(0);
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
 
-  const handleBuildingChange = (
-    selectedBuilding: number,
-    totalBuildings: number
+  const handleSlotClick = (
+    buildingIndex: number,
+    floorIndex: number,
+    slotNumber: number
   ) => {
-    setSelectedBuildingIndex(selectedBuilding);
+    // reminder, these won't get updated until a slot is clicked in AvailableParkingSlotsView
+    // so selected building/floor index can be irrelavant, until slot is clicked
+    setSelectedBuildingIndex(buildingIndex);
+    setSelectedFloorIndex(floorIndex);
+    setSelectedSlot(slotNumber);
+    setModalOpen(true);
   };
 
-  const handleFloorChange = (selectedFloor: number, totalFloors: number) => {
-    setSelectedFloorIndex(selectedFloor);
+  const handleModalSave = (maintenanceSlot: IMaintenanceSlotType) => {
+    handleMaintenanceSave(
+      maintenanceSlot,
+      selectedBuildingIndex,
+      selectedFloorIndex,
+      selectedSlot
+    );
+    setModalOpen(false);
   };
 
   return (
     <>
-      <BuildingDropdown
-        canAddBuilding={false}
-        totalBuildings={parkingSlotsDB.length}
-        onBuildingChange={handleBuildingChange}
+      <AvailableParkingSlotsView
+        parkingSlotsDB={parkingSlotsDB}
+        onSlotClick={handleSlotClick}
+        maintenanceSlotsDB={maintenanceSlotsDB}
       />
-      <FloorDropdown
-        canAddFloor={true}
-        onFloorChange={handleFloorChange}
-        selectedFloor={selectedFloorIndex}
-        totalFloors={parkingSlotsDB[selectedBuildingIndex].length}
+      <MaintenanceModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleModalSave}
       />
     </>
   );
