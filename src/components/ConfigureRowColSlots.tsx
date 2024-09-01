@@ -62,7 +62,6 @@ export const ConfigureRowColSlots: React.FC<{
       selectedBuildingFloorSlots.slotsDB[selectedBuildingFloorSlots.building][
         selectedBuildingFloorSlots.floor
       ].saved = false;
-      setAlreadySaved(false);
     };
 
     const handleColsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +74,6 @@ export const ConfigureRowColSlots: React.FC<{
       selectedBuildingFloorSlots.slotsDB[selectedBuildingFloorSlots.building][
         selectedBuildingFloorSlots.floor
       ].saved = false;
-      setAlreadySaved(false);
     };
 
     const handleConfigurableSlotClick = (index: number) => {
@@ -241,10 +239,10 @@ export const ConfigureRowColSlots: React.FC<{
 export const DisplayConfigurableSlots: React.FC<
   IDisplayConfigurableSlotsProps
 > = ({ rows, cols, unavailableSlots, handleConfigurableSlotClick }) => {
-  const buttons = [];
+  const buttons: JSX.Element[] = []; // Explicitly typing the array
 
   for (let i = 0; i < rows; i++) {
-    const rowButtons = [];
+    const rowButtons: JSX.Element[] = []; // Explicitly typing the array
     for (let j = 0; j < cols; j++) {
       const index = i * cols + j;
       rowButtons.push(

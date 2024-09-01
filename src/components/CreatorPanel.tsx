@@ -60,7 +60,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       setBuildingMapsFloor(updatedB2f);
       const updatedParkingSlotsDB = [
         ...parkingSlotsDB,
-        [{ rows: 0, cols: 0, slots: [], saved: true }],
+        [{ rows: 0, cols: 0, slots: [], saved: false }],
       ];
       setParkingSlotsDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
@@ -100,7 +100,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
         rows: 0,
         cols: 0,
         slots: [],
-        saved: true,
+        saved: false,
       });
       setParkingSlotsDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
