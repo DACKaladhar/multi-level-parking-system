@@ -8,6 +8,7 @@ import {
 import {
   IMaintenanceSlot,
   IMaintenanceSlotType,
+  ParkingSlotType,
   VehicleType,
 } from "./components-common-utils/common-parking-slot.interface";
 
@@ -86,8 +87,8 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
               unavailableSlots[index] &&
               maintenanceSlotsDB &&
               maintenanceSlotsDB[selectedBuildingIndex][selectedFloorIndex]
-                .maintenanceSlots[index]
-                ? `url("${getImageUrl(
+                ?.maintenanceSlots[index]
+                ? `url("${getVehicleImageUrl(
                     maintenanceSlotsDB[selectedBuildingIndex][
                       selectedFloorIndex
                     ].maintenanceSlots[index]
@@ -98,7 +99,33 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
             backgroundRepeat: "no-repeat",
           }}
         >
-          {unavailableSlots[index] && maintenanceSlotsDB ? null : null}
+          <div className="badge-slotType">
+            {/* Either only one of below should be displayed */}
+            {false && <span className="badge-text"></span>}
+            {unavailableSlots[index] &&
+              maintenanceSlotsDB?.[selectedBuildingIndex]?.[selectedFloorIndex]
+                ?.maintenanceSlots[index].isAvailable &&
+              maintenanceSlotsDB?.[selectedBuildingIndex]?.[selectedFloorIndex]
+                ?.maintenanceSlots[index]?.parkingSlotType && (
+                // showing badge only if slot is available and parking slot type is defined
+                <img
+                  src={
+                    maintenanceSlotsDB &&
+                    maintenanceSlotsDB[selectedBuildingIndex][
+                      selectedFloorIndex
+                    ]?.maintenanceSlots[index]
+                      ? getSlotTypeImageUrl(
+                          maintenanceSlotsDB[selectedBuildingIndex][
+                            selectedFloorIndex
+                          ].maintenanceSlots[index]
+                        )
+                      : ""
+                  }
+                  alt=""
+                  className="badge-img"
+                />
+              )}
+          </div>
         </button>
       );
     }
@@ -143,18 +170,43 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   );
 };
 
-const getImageUrl = (slotTypeInfo: IMaintenanceSlotType) => {
+const getVehicleImageUrl = (slotTypeInfo: IMaintenanceSlotType) => {
   switch (slotTypeInfo.vehicleType) {
     case VehicleType.TwoWheeler:
-      return "../public-assets/2wheeler-1.png";
+      return "../public-assets/vehicle-types/2wheeler-4.png";
     case VehicleType.FourWheeler:
-      return "../public-assets/4wheeler-3.png";
+      return "../public-assets/vehicle-types/4wheeler-5.png";
     case VehicleType.Handicapped:
-      return "../public-assets/handicapped-1.png";
+      return "../public-assets/vehicle-types/handicapped-2.png";
     case VehicleType.CustomizedVehicle:
-      return "../public-assets/parkingP.png";
+      return "../public-assets/vehicle-types/customized-vehicle-1.png";
     case VehicleType.Cab:
-      return "../public-assets/Cab-2.png";
+      return "../public-assets/vehicle-types/Cab-3.png";
+    case VehicleType.Truck:
+      return "../public-assets/vehicle-types/Truck-2.png";
+    case VehicleType.Bicycle:
+      return "../public-assets/vehicle-types/Bicycle-1.png";
+    case VehicleType.Dual:
+      return "../public-assets/vehicle-types/Dual-1.png";
+    default:
+      return ""; // Return an empty string or a default image path
+  }
+};
+
+const getSlotTypeImageUrl = (slotTypeInfo: IMaintenanceSlotType) => {
+  switch (slotTypeInfo.parkingSlotType) {
+    case ParkingSlotType.ElectricVehicle:
+      return "../public-assets/slot-types/plant.png";
+    case ParkingSlotType.LongTermParking:
+      return "../public-assets/slot-types/calender.png";
+    case ParkingSlotType.OpenParking:
+      return "../public-assets/slot-types/open.png";
+    case ParkingSlotType.Reserved:
+      return "../public-assets/slot-types/reserved.png";
+    case ParkingSlotType.VisitorsParking:
+      return "../public-assets/slot-types/visitor.png";
+    case ParkingSlotType.Regular:
+      return "../public-assets/slot-types/parking.png";
     default:
       return ""; // Return an empty string or a default image path
   }

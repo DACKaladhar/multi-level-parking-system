@@ -5,15 +5,15 @@ import {
   IMaintenanceSlot,
 } from "./components-common-utils/common-parking-slot.interface";
 import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
+import "../components-styles/AvailableSlotsView.css";
 import { MaintenanceModal } from "./maintenance-modal";
 
 interface IMaintenancePanel {
   parkingSlotsDB: IParkingSlotsDB[][];
   maintenanceSlotsDB: IMaintenanceSlot[][];
-  setMaintenanceSlotsDB: React.Dispatch<
-    React.SetStateAction<IMaintenanceSlot[][]>
-  >;
   handleMaintenanceSave: (
+    parkingSlotsDB: IParkingSlotsDB[][],
+    maintenanceSlotsDB: IMaintenanceSlot[][],
     maintenanceSlot: IMaintenanceSlotType,
     buildingIndex: number,
     floorIndex: number,
@@ -37,10 +37,9 @@ interface IMaintenancePanel {
  *
  */
 
-export const MaintenancePanel: React.FC<IMaintenancePanel> = ({
+export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
   parkingSlotsDB,
   maintenanceSlotsDB,
-  setMaintenanceSlotsDB,
   handleMaintenanceSave,
 }) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
@@ -53,8 +52,6 @@ export const MaintenancePanel: React.FC<IMaintenancePanel> = ({
     floorIndex: number,
     slotNumber: number
   ) => {
-    // reminder, these won't get updated until a slot is clicked in AvailableParkingSlotsView
-    // so selected building/floor index can be irrelavant, until slot is clicked
     setSelectedBuildingIndex(buildingIndex);
     setSelectedFloorIndex(floorIndex);
     setSelectedSlot(slotNumber);
@@ -63,6 +60,8 @@ export const MaintenancePanel: React.FC<IMaintenancePanel> = ({
 
   const handleModalSave = (maintenanceSlot: IMaintenanceSlotType) => {
     handleMaintenanceSave(
+      parkingSlotsDB,
+      maintenanceSlotsDB,
       maintenanceSlot,
       selectedBuildingIndex,
       selectedFloorIndex,
@@ -73,6 +72,9 @@ export const MaintenancePanel: React.FC<IMaintenancePanel> = ({
 
   return (
     <>
+      <h1 style={{ fontWeight: "Lighter" }}>
+        Define properties for your slots
+      </h1>
       <AvailableParkingSlotsView
         parkingSlotsDB={parkingSlotsDB}
         onSlotClick={handleSlotClick}

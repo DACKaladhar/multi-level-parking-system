@@ -51,6 +51,7 @@ h1 {
 }
 
 .square-button {
+  position: relative; /* For undisturbed displaying of image of SlotType*/
   border: 2px solid rgb(102, 149, 224); /* Hollow border */
   background-color: transparent; /* Hollow background */
   color: black; /* Text color */
