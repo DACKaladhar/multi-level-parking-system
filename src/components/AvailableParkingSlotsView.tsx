@@ -5,6 +5,7 @@ import {
   BuildingDropdown,
   FloorDropdown,
 } from "./components-common-utils/dynamic-buttons";
+
 interface IAvailableSlotsViewProps {
   parkingSlotsDB: IParkingSlotsDB[][];
   onConfigure: () => void;
@@ -20,7 +21,6 @@ interface IAvailableSlotsViewProps {
  * @param {() => void} props.onConfigure - A callback function to switch to the configuration view when slots are not available.
  * @returns {JSX.Element} A grid of available parking slots or a prompt to configure slots.
  */
-
 export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   parkingSlotsDB,
   onConfigure,
@@ -30,30 +30,25 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
 
   // Function definitions
-  const handleBuildingChange = (
-    selectedBuilding: number,
-    totalBuildings: number
-  ): void => {
+  const handleBuildingChange = (selectedBuilding: number): void => {
     setSelectedBuildingIndex(selectedBuilding);
-    setSelectedFloorIndex(0);
+    setSelectedFloorIndex(0); // Reset floor selection when the building changes
   };
 
-  const handleFloorChange = (
-    selectedFloor: number,
-    totalFloors: number
-  ): void => {
+  const handleFloorChange = (selectedFloor: number): void => {
     setSelectedFloorIndex(selectedFloor);
   };
 
   // Component logic
-  const buttons = [];
-  const rows = parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].rows;
-  const cols = parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].cols;
-  const unavailableSlots =
-    parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].slots;
+  const selectedSlotsDB =
+    parkingSlotsDB[selectedBuildingIndex]?.[selectedFloorIndex];
+  const rows = selectedSlotsDB?.rows ?? 0;
+  const cols = selectedSlotsDB?.cols ?? 0;
+  const unavailableSlots = selectedSlotsDB?.slots ?? [];
 
+  const buttons: JSX.Element[] = [];
   for (let i = 0; i < rows; i++) {
-    const rowButtons = [];
+    const rowButtons: JSX.Element[] = [];
     for (let j = 0; j < cols; j++) {
       const index = i * cols + j;
       rowButtons.push(
@@ -77,30 +72,28 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   return (
     <div className="ConfigureRowColSlots">
       <h1>Available Parking Slots</h1>
-      <div className="button-row">
-        <div className="unique-div">
-          {buttons.length > 0 ? (
-            <>
-              <BuildingDropdown
-                canAddBuilding={false}
-                onBuildingChange={handleBuildingChange}
-                totalBuildings={parkingSlotsDB.length}
-              />
-              <FloorDropdown
-                canAddFloor={false}
-                onFloorChange={handleFloorChange}
-                selectedFloor={selectedFloorIndex}
-                totalFloors={parkingSlotsDB[selectedBuildingIndex].length}
-              />
-              {buttons}
-            </>
-          ) : (
-            <>
-              <p>Please Configure parking slots.</p>
-              <button onClick={onConfigure}>Add Slots</button>
-            </>
-          )}
-        </div>
+      <div className="unique-div">
+        {rows > 0 && cols > 0 ? (
+          <>
+            <BuildingDropdown
+              canAddBuilding={false}
+              onBuildingChange={handleBuildingChange}
+              totalBuildings={parkingSlotsDB.length}
+            />
+            <FloorDropdown
+              canAddFloor={false}
+              onFloorChange={handleFloorChange}
+              selectedFloor={selectedFloorIndex}
+              totalFloors={parkingSlotsDB[selectedBuildingIndex]?.length || 0}
+            />
+            {buttons}
+          </>
+        ) : (
+          <>
+            <p>Please Configure parking slots.</p>
+            <button onClick={onConfigure}>Add Slots</button>
+          </>
+        )}
       </div>
     </div>
   );

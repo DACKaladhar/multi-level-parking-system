@@ -7,7 +7,7 @@ import { IParkingSlotsDB } from "./CreatorPanel";
 export const CompanyPanel: React.FC = () => {
   const [view, setView] = useState<"view" | "config" | "maintenance">("view");
   const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>([
-    [{ rows: 0, cols: 0, slots: [] }],
+    [{ rows: 0, cols: 0, slots: [], saved: false }],
   ]);
 
   const handleSubmission = (db: IParkingSlotsDB[][]) => {
