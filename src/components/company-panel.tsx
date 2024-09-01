@@ -3,46 +3,65 @@ import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
 // import { ConfigureRowColSlots } from "./ConfigureRowColSlots";
 import { CreatorPanel } from "./CreatorPanel";
 import { IParkingSlotsDB } from "./CreatorPanel";
-import { MaintenancePanel } from "./maintenance-panel-renderer";
+import { MaintenancePanelRenderer } from "./maintenance-panel-renderer";
 import {
   IMaintenanceSlot,
   IMaintenanceSlotType,
+  ParkingSlotType,
+  SecurityType,
   VehicleType,
 } from "./components-common-utils/common-parking-slot.interface";
 
-export const CompanyPanel: React.FC = () => {
+interface ICompanyPanelRenderer {
+  parkingSlotsDB: IParkingSlotsDB[][];
+  setParkingSlotsDB: React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>;
+  maintenanceSlotsDB: IMaintenanceSlot[][];
+  setMaintenanceSlotsDB: React.Dispatch<
+    React.SetStateAction<IMaintenanceSlot[][]>
+  >;
+}
+
+export const CompanyPanelRenderer: React.FC<ICompanyPanelRenderer> = ({
+  parkingSlotsDB,
+  setParkingSlotsDB,
+  maintenanceSlotsDB,
+  setMaintenanceSlotsDB,
+}) => {
   const [view, setView] = useState<"view" | "config" | "maintenance">("view");
-  const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>([
-    [{ rows: 0, cols: 0, slots: [] }],
-  ]);
-  const [maintenanceSlotsDB, setMaintenanceSlotsDB] = useState<
-    IMaintenanceSlot[][]
-  >(setupMaintainanceSlotsDB(parkingSlotsDB));
+  // const [parkingSlotsDB, setParkingSlotsDB] =
+  //   useState<IParkingSlotsDB[][]>(mainParkingSlotsDB);
+  // const [maintenanceSlotsDB, setMaintenanceSlotsDB] = useState<
+  //   IMaintenanceSlot[][]
+  // >(
+  //   // either registering or initializing
+  //   mainMaintenanceSlotsDB || syncMaintainanceSlotsDB(parkingSlotsDB)
+  // );
 
   const handleSubmission = (db: IParkingSlotsDB[][]) => {
+    // Submission from the Creator Panel
     setParkingSlotsDB(db);
-    setView("view");
-    // if user configures again them this will reset, THIS SHOULDn't happen
-    setMaintenanceSlotsDB(setupMaintainanceSlotsDB(db));
+    setView("maintenance");
+    // if user configures again them , THIS SHOULDn't happen
+    setMaintenanceSlotsDB(syncMaintainanceSlotsDB(db, maintenanceSlotsDB));
   };
 
   const handleMaintenanceSave = (
+    parkingSlotsDB: IParkingSlotsDB[][],
+    maintenanceSlotsDB: IMaintenanceSlot[][],
     maintenanceSlot: IMaintenanceSlotType,
     buildingIndex: number,
     floorIndex: number,
     selectedSlot: number
   ) => {
     // Save maintenanceSlot data to maintenanceSlotsDB
-    setMaintenanceSlotsDB((prevDB) => {
-      const newDB = [...prevDB];
-      newDB[buildingIndex][floorIndex].maintenanceSlots[selectedSlot] =
-        maintenanceSlot;
+    const prevDB = [...maintenanceSlotsDB];
+    prevDB[buildingIndex][floorIndex].maintenanceSlots[selectedSlot] =
+      maintenanceSlot;
 
-      return newDB;
-    });
+    setMaintenanceSlotsDB(syncMaintainanceSlotsDB(parkingSlotsDB, prevDB));
   };
 
-  console.log(parkingSlotsDB);
+  console.log("parkingSlotsDB", parkingSlotsDB);
   console.log("maintenanceSlotsDB", maintenanceSlotsDB);
   return (
     <>
@@ -72,10 +91,9 @@ export const CompanyPanel: React.FC = () => {
       )}
 
       {view === "maintenance" && (
-        <MaintenancePanel
+        <MaintenancePanelRenderer
           parkingSlotsDB={parkingSlotsDB}
           maintenanceSlotsDB={maintenanceSlotsDB}
-          setMaintenanceSlotsDB={setMaintenanceSlotsDB}
           handleMaintenanceSave={handleMaintenanceSave}
         />
       )}
@@ -83,8 +101,9 @@ export const CompanyPanel: React.FC = () => {
   );
 };
 
-const setupMaintainanceSlotsDB = (
-  parkingSlotsDB: IParkingSlotsDB[][]
+export const syncMaintainanceSlotsDB = (
+  parkingSlotsDB: IParkingSlotsDB[][],
+  maintenanceSlotsDB?: IMaintenanceSlot[][]
 ): IMaintenanceSlot[][] => {
   let resultDB: IMaintenanceSlot[][] = [];
 
@@ -92,7 +111,7 @@ const setupMaintainanceSlotsDB = (
     let buildingMaintenance: IMaintenanceSlot[] = [];
 
     for (let f = 0; f < parkingSlotsDB[b].length; f++) {
-      let floorSlots: IMaintenanceSlotType[] = [];
+      let floorSlotTypes: IMaintenanceSlotType[] = [];
 
       for (
         let slotNo = 0;
@@ -100,10 +119,27 @@ const setupMaintainanceSlotsDB = (
         slotNo++
       ) {
         // Store isAvailable for each slot
-        const isAvailable = parkingSlotsDB[b][f].slots[slotNo];
-        floorSlots.push({
+        const isAvailable =
+          !!parkingSlotsDB[b][f].slots[slotNo] ||
+          !!maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots[slotNo]?.isAvailable;
+        const maintenanceStatus =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.maintenanceStatus || undefined; // default Maintenance Status is undefined
+        const parkingSlotType =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.parkingSlotType || ParkingSlotType.Regular; // default Parking Slot Type is Regular
+        const securityType =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.securityType || SecurityType.Monitored; // default Security Type is Monitored
+        const vehicleType =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.vehicleType || VehicleType.FourWheeler; // default Vehicle Type is Four Wheeler
+        floorSlotTypes.push({
           isAvailable,
-          vehicleType: VehicleType.CustomizedVehicle, // initiate all of them with P instead of leaving blank
+          maintenanceStatus: maintenanceStatus,
+          securityType: securityType,
+          parkingSlotType: parkingSlotType,
+          vehicleType: vehicleType, // initiate all of them with P instead of leaving blank
         });
       }
 
@@ -111,7 +147,7 @@ const setupMaintainanceSlotsDB = (
       buildingMaintenance.push({
         rows: parkingSlotsDB[b][f].rows,
         cols: parkingSlotsDB[b][f].cols,
-        maintenanceSlots: floorSlots,
+        maintenanceSlots: floorSlotTypes,
       });
     }
 

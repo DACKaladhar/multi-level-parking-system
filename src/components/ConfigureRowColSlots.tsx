@@ -116,6 +116,7 @@ export const ConfigureRowColSlots: React.FC<{
         );
         setAlreadySaved(true);
       } else {
+        // might display a tooltip or modal or an alert
         console.log("Please configure the slots before saving");
       }
     };

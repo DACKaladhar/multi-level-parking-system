@@ -1,28 +1,51 @@
 @import url(./ConfigureRowColSlots.css);
 
 .square-button.disappear {
-  background-color: transparent; /* Fill color when selected */
+  background-color: transparent;
   border: transparent;
   pointer-events: none; /* DON'T REMOVE THIS- will affect click on it in View State */
 }
 .unique-div {
-  border: 3px solid #3498db; /* Bright border color */
-  border-radius: 8px; /* Rounded corners */
-  padding: 20px; /* Space inside the border */
-  background-color: #f9f9f9; /* Light background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  position: relative; /* To position the pseudo-element */
-  margin: 20px; /* Space around the div */
+  border: 3px solid #3498db; 
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin: 20px;
 }
 
 .unique-div::before {
-  content: 'Final-State'; /* Label */
+  content: 'Final-State';
   position: absolute;
-  top: -10px; /* Adjust as needed */
-  left: -10px; /* Adjust as needed */
-  background-color: #3498db; /* Background color for the label */
-  color: white; /* Text color */
-  padding: 5px 10px; /* Padding for the label */
-  font-weight: bold; /* Bold text */
-  border-radius: 5px; /* Rounded corners for the label */
+  top: -10px;
+  left: -10px;
+  background-color: #3498db;
+  color: white;
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.badge-slotType {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+}
+
+.badge-text {
+  background-color: #3498db;
+  color: white;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: bold; 
+  font-size: 8px;
+}
+
+.badge-img {
+  width: 15px;
+  height: 15px;
 }

@@ -5,17 +5,19 @@ export enum VehicleType {
   Handicapped = 'Handicapped',
   CustomizedVehicle = 'Customized Vehicle',
   Cab = 'Cab',
+  Bicycle = 'Bicycle',
+  Truck = 'Truck',
+  Dual = 'Dual',
 }
 
 // Enum to define possible parking slot types
 export enum ParkingSlotType {
-  Regular = 'Regular',
-  Dual = 'Dual',
-  VisitorsParking = 'Visitors Parking',
-  ElectricVehicle = 'Electric Vehicle',
-  LongTermParking = 'Long-Term Parking',
-  NoBooking = 'No Booking',
-  Reserved = 'Reserved',
+  Regular = 'Regular', // P as a badge
+  VisitorsParking = 'Visitors Parking', // visitor as a badge
+  ElectricVehicle = 'Electric Vehicle', // leaf as a badge
+  LongTermParking = 'Long-Term Parking', // calender as a badge
+  OpenParking = 'Open Parking', // open as a badge
+  Reserved = 'Reserved',  // reserved as a badge
 }
 
 // Enum to define possible statuses of slots
