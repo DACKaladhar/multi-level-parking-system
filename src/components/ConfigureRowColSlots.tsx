@@ -146,9 +146,7 @@ export const ConfigureRowColSlots: React.FC<{
         setRows(savedOptions.rows);
         setCols(savedOptions.cols);
         setInstantParkingSlots(savedOptions.slots);
-        if (savedOptions.saved) {
-          setAlreadySaved(true);
-        }
+        setAlreadySaved(savedOptions.saved);
       } else {
         setRows(0);
         setCols(0);
