@@ -59,6 +59,10 @@ export const ConfigureRowColSlots: React.FC<{
         setRows(value);
         setInstantParkingSlots(new Array(value * cols).fill(true));
       }
+      selectedBuildingFloorSlots.slotsDB[selectedBuildingFloorSlots.building][
+        selectedBuildingFloorSlots.floor
+      ].saved = false;
+      setAlreadySaved(false);
     };
 
     const handleColsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,21 +72,32 @@ export const ConfigureRowColSlots: React.FC<{
         setCols(value);
         setInstantParkingSlots(new Array(rows * value).fill(true));
       }
+      selectedBuildingFloorSlots.slotsDB[selectedBuildingFloorSlots.building][
+        selectedBuildingFloorSlots.floor
+      ].saved = false;
+      setAlreadySaved(false);
     };
 
     const handleConfigurableSlotClick = (index: number) => {
-      if (alreadySaved) {
-        setAlreadySaved(false);
-      }
-      setInstantParkingSlots((prev) => {
-        const updated = [...prev];
-        updated[index] = !updated[index];
-        return updated;
-      });
+      const updatedSlots = [...instantParkingSlots];
+      const building = selectedBuildingFloorSlots.building;
+      const floor = selectedBuildingFloorSlots.floor;
+
+      updatedSlots[index] = !updatedSlots[index];
+
+      setInstantParkingSlots(updatedSlots);
+
+      // Directly update the slots in the parkingSlotsDB
+      selectedBuildingFloorSlots.slotsDB[building][floor].slots = updatedSlots;
+
+      selectedBuildingFloorSlots.slotsDB[building][floor].saved = false;
+
+      setAlreadySaved(false);
     };
 
     const handleSubmit = () => {
       const result = checkAllSaved(selectedBuildingFloorSlots.slotsDB);
+
       if (result[2] === 1) {
         onSubmission(selectedBuildingFloorSlots.slotsDB);
       } else {
@@ -106,6 +121,7 @@ export const ConfigureRowColSlots: React.FC<{
           rows: rows,
           cols: cols,
           slots: instantParkingSlots,
+          saved: true,
         };
         selectedBuildingFloorSlots.callbackOnSave(
           rows,
@@ -132,7 +148,9 @@ export const ConfigureRowColSlots: React.FC<{
         setRows(savedOptions.rows);
         setCols(savedOptions.cols);
         setInstantParkingSlots(savedOptions.slots);
-        setAlreadySaved(true);
+        if (savedOptions.saved) {
+          setAlreadySaved(true);
+        }
       } else {
         setRows(0);
         setCols(0);
@@ -254,7 +272,7 @@ export const DisplayConfigurableSlots: React.FC<
 const checkAllSaved = (parkingSlotsDB: IParkingSlotsDB[][]): number[] => {
   for (let i = 0; i < parkingSlotsDB.length; i++) {
     for (let j = 0; j < parkingSlotsDB[i].length; j++) {
-      if (!parkingSlotsDB[i][j].slots.length) {
+      if (!parkingSlotsDB[i][j].saved) {
         return [i, j, 0];
       }
     }
