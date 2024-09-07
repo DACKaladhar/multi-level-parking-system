@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../components-styles/ConfigureRowColSlots.css";
 import { IParkingSlotsDB } from "./CreatorPanel";
 export interface IConfigureRowColSlots {
-  savedRows: number;
-  savedCols: number;
   building: number;
   floor: number;
   callbackOnSave: (
@@ -122,6 +120,7 @@ export const ConfigureRowColSlots: React.FC<{
     };
 
     useEffect(() => {
+      // this runs if building or floor is changed in creator panel
       // If slots are already saved for selected building, floor got from Creator Panel
       const savedOptions =
         selectedBuildingFloorSlots.slotsDB[selectedBuildingFloorSlots.building][
