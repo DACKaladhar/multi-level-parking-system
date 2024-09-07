@@ -37,6 +37,7 @@ export const CompanyPanelRenderer: React.FC<ICompanyPanelRenderer> = ({
   //   mainMaintenanceSlotsDB || syncMaintainanceSlotsDB(parkingSlotsDB)
   // );
 
+  // This is submit button in the configuration state. so confusing
   const handleSubmission = (db: IParkingSlotsDB[][]) => {
     // Submission from the Creator Panel
     setParkingSlotsDB(db);
@@ -45,6 +46,7 @@ export const CompanyPanelRenderer: React.FC<ICompanyPanelRenderer> = ({
     setMaintenanceSlotsDB(syncMaintainanceSlotsDB(db, maintenanceSlotsDB));
   };
 
+  // save button on the modal of the maintenance panel. so confusing
   const handleMaintenanceSave = (
     parkingSlotsDB: IParkingSlotsDB[][],
     maintenanceSlotsDB: IMaintenanceSlot[][],

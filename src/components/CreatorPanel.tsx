@@ -66,8 +66,6 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       ];
       setParkingSlotsDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
-        savedRows: 0,
-        savedCols: 0,
         callbackOnSave: handleSlotsSaveButton,
         building: buildingIndex,
         floor: 0,
@@ -77,10 +75,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       // changing new building should make floor index default to 0
       setTotalFloors(buildingMapsFloor[buildingIndex]);
       setSelectedFloorIndex(0);
-      const currentSlot: IParkingSlotsDB = parkingSlotsDB[buildingIndex][0];
       setSelectedBuildingFloorSlots({
-        savedRows: currentSlot.rows,
-        savedCols: currentSlot.cols,
         callbackOnSave: handleSlotsSaveButton,
         building: buildingIndex,
         floor: 0,
@@ -105,19 +100,13 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       });
       setParkingSlotsDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
-        savedRows: 0,
-        savedCols: 0,
         callbackOnSave: handleSlotsSaveButton,
         building: selectedBuildingIndex,
         floor: floorIndex,
         slotsDB: updatedParkingSlotsDB,
       });
     } else {
-      const currentSlot: IParkingSlotsDB =
-        parkingSlotsDB[selectedBuildingIndex][floorIndex];
       setSelectedBuildingFloorSlots({
-        savedRows: currentSlot.rows,
-        savedCols: currentSlot.cols,
         callbackOnSave: handleSlotsSaveButton,
         building: selectedBuildingIndex,
         floor: floorIndex,
@@ -141,8 +130,6 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
   // NEED DESCRIPTION ABOUT THIS
   const [selectedBuildingFloorSlots, setSelectedBuildingFloorSlots] =
     useState<IConfigureRowColSlots>({
-      savedRows: 0,
-      savedCols: 0,
       callbackOnSave: handleSlotsSaveButton,
       building: selectedBuildingIndex,
       floor: selectedFloorIndex,
