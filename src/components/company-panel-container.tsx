@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { CompanyPanelRenderer } from "./company-panel";
+import { CompanyPanelRenderer } from "./company-panel-renderer";
 import {
   IMaintenanceSlot,
+  IMaintenanceSlotType,
   MaintenanceStatus,
   ParkingSlotType,
   SecurityType,
@@ -11,27 +12,100 @@ import { IParkingSlotsDB } from "./CreatorPanel";
 
 export const CompanyPanelContainer: React.FC = () => {
   const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>(
-    // [[{ rows: 0, cols: 0, slots: [] }],] first time ||
+    // [[{ rows: 0, cols: 0, slots: [] }]] // first time ||
     // fetch from database
     dummyParkingSlots()
   );
   const [maintenanceSlotsDB, setMaintenanceSlotsDB] = useState<
     IMaintenanceSlot[][]
   >(
-    // syncMaintainanceSlotsDB(parkingSlotsDB) or fetch from remote database
+    // syncMaintainanceSlotsDB(parkingSlotsDB) // or fetch from remote database
     dummyMaintenanceSlots()
   );
+
+  const writeIntoPSDB = (psdb: IParkingSlotsDB[][]) => {
+    // Write into remote PSdb & if it successfull do below else write failure logic...
+    setParkingSlotsDB(psdb);
+
+    // ... write the necessary code after promise db integration (promises resolves)
+
+    // update MSdb on sync with latest PSdb.
+    writeIntoMSDB(syncMaintainanceSlotsDB(psdb, maintenanceSlotsDB));
+  };
+
+  const writeIntoMSDB = (msdb: IMaintenanceSlot[][]) => {
+    // Write into remote db & if it successfull do below else write failure logic...
+    setMaintenanceSlotsDB(msdb);
+  };
 
   return (
     <>
       <CompanyPanelRenderer
         parkingSlotsDB={parkingSlotsDB}
-        setParkingSlotsDB={setParkingSlotsDB}
-        setMaintenanceSlotsDB={setMaintenanceSlotsDB}
+        writeIntoPSDB={writeIntoPSDB}
         maintenanceSlotsDB={maintenanceSlotsDB}
+        writeIntoMSDB={writeIntoMSDB}
       />
     </>
   );
+};
+
+// To make MSDB on sync with latest PSDB
+export const syncMaintainanceSlotsDB = (
+  parkingSlotsDB: IParkingSlotsDB[][],
+  maintenanceSlotsDB?: IMaintenanceSlot[][]
+): IMaintenanceSlot[][] => {
+  let resultDB: IMaintenanceSlot[][] = [];
+
+  for (let b = 0; b < parkingSlotsDB.length; b++) {
+    let buildingMaintenance: IMaintenanceSlot[] = [];
+
+    for (let f = 0; f < parkingSlotsDB[b].length; f++) {
+      let floorSlotTypes: IMaintenanceSlotType[] = [];
+
+      for (
+        let slotNo = 0;
+        slotNo < parkingSlotsDB[b][f].slots.length;
+        slotNo++
+      ) {
+        // Store isAvailable for each slot
+        const isAvailable =
+          !!parkingSlotsDB[b][f].slots[slotNo] ||
+          !!maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots[slotNo]?.isAvailable;
+        const maintenanceStatus =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.maintenanceStatus || undefined; // default Maintenance Status is undefined
+        const parkingSlotType =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.parkingSlotType || ParkingSlotType.Regular; // default Parking Slot Type is Regular
+        const securityType =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.securityType || SecurityType.Monitored; // default Security Type is Monitored
+        const vehicleType =
+          maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots?.[slotNo]
+            ?.vehicleType || VehicleType.FourWheeler; // default Vehicle Type is Four Wheeler
+        floorSlotTypes.push({
+          isAvailable,
+          maintenanceStatus: maintenanceStatus,
+          securityType: securityType,
+          parkingSlotType: parkingSlotType,
+          vehicleType: vehicleType, // initiate all of them with P instead of leaving blank
+        });
+      }
+
+      // Push the entire floor to the buildingMaintenance array
+      buildingMaintenance.push({
+        rows: parkingSlotsDB[b][f].rows,
+        cols: parkingSlotsDB[b][f].cols,
+        maintenanceSlots: floorSlotTypes,
+      });
+    }
+
+    // Push the buildingMaintenance array to resultDB
+    resultDB.push(buildingMaintenance);
+  }
+
+  return resultDB;
 };
 
 const dummyMaintenanceSlots = (): IMaintenanceSlot[][] => {
