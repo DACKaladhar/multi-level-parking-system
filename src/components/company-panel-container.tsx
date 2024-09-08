@@ -8,19 +8,19 @@ import {
   SecurityType,
   VehicleType,
 } from "./components-common-utils/common-parking-slot.interface";
-import { IParkingSlotsDB } from "./CreatorPanel";
+import { IParkingSlotsDB } from "./configuration-panel-container";
 
 export const CompanyPanelContainer: React.FC = () => {
   const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>(
-    // [[{ rows: 0, cols: 0, slots: [] }]] // first time ||
+    [[{ rows: 0, cols: 0, slots: [] }]] // first time ||
     // fetch from database
-    dummyParkingSlots()
+    // dummyParkingSlots()
   );
   const [maintenanceSlotsDB, setMaintenanceSlotsDB] = useState<
     IMaintenanceSlot[][]
   >(
-    // syncMaintainanceSlotsDB(parkingSlotsDB) // or fetch from remote database
-    dummyMaintenanceSlots()
+    syncMaintainanceSlotsDB(parkingSlotsDB) // or fetch from remote database
+    // dummyMaintenanceSlots()
   );
 
   const writeIntoPSDB = (psdb: IParkingSlotsDB[][]) => {

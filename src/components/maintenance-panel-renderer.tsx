@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IParkingSlotsDB } from "./CreatorPanel";
+import { IParkingSlotsDB } from "./configuration-panel-container";
 import {
   IMaintenanceSlotType,
   IMaintenanceSlot,

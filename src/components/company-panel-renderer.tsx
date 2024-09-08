@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
 // import { ConfigureRowColSlots } from "./ConfigureRowColSlots";
-import { CreatorPanel } from "./CreatorPanel";
-import { IParkingSlotsDB } from "./CreatorPanel";
+import {
+  IParkingSlotsDB,
+  ConfigurationPanelContainer,
+} from "./configuration-panel-container";
 import { IMaintenanceSlot } from "./components-common-utils/common-parking-slot.interface";
 import { MaintenancePanelContainer } from "./maintenance-panel-container";
 
@@ -20,13 +22,6 @@ export const CompanyPanelRenderer: React.FC<ICompanyPanelRenderer> = ({
   writeIntoMSDB,
 }) => {
   const [view, setView] = useState<"view" | "config" | "maintenance">("view");
-
-  // This should be there in the creator-panel-container
-  const handleSubmission = (db: IParkingSlotsDB[][]) => {
-    // Submission from the Creator Panel
-    writeIntoPSDB(db);
-    setView("maintenance");
-  };
 
   console.log("parkingSlotsDB", parkingSlotsDB);
   console.log("maintenanceSlotsDB", maintenanceSlotsDB);
@@ -50,10 +45,9 @@ export const CompanyPanelRenderer: React.FC<ICompanyPanelRenderer> = ({
       )}
 
       {view === "config" && (
-        <CreatorPanel
+        <ConfigurationPanelContainer
           parkingSlotsDB={parkingSlotsDB}
           writeIntoPSDB={writeIntoPSDB}
-          handleSubmission={handleSubmission}
         />
       )}
 
