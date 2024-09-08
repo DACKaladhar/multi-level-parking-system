@@ -16,7 +16,7 @@ export interface IParkingSlotsDB {
 
 export interface ICreatorPanel {
   parkingSlotsDB: IParkingSlotsDB[][];
-  setParkingSlotsDB: React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>;
+  writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => void;
   handleSubmission: (db: IParkingSlotsDB[][]) => void;
 }
 
@@ -27,7 +27,7 @@ export interface ICreatorPanel {
  *
  * @param {ICreatorPanel} props - The props for the component.
  * @param {IParkingSlotsDB[][]} props.parkingSlotsDB - The current state of the parking slots database.
- * @param {React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>} props.setParkingSlotsDB - Function to update the parking slots database state.
+ * @param {React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>} props.writeIntoPSDB - Function to update the parking slots database state.
  * @param {(db: IParkingSlotsDB[][]) => void} props.handleSubmission - Callback function that passes the updated parkingSlotsDB to CopmanyPanel.
  *
  * @returns {JSX.Element} The CreatorPanel component.
@@ -35,7 +35,7 @@ export interface ICreatorPanel {
 
 export const CreatorPanel: React.FC<ICreatorPanel> = ({
   parkingSlotsDB,
-  setParkingSlotsDB,
+  writeIntoPSDB,
   handleSubmission,
 }) => {
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
@@ -64,7 +64,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
         ...parkingSlotsDB,
         [{ rows: 0, cols: 0, slots: [] }],
       ];
-      setParkingSlotsDB(updatedParkingSlotsDB);
+      writeIntoPSDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
         callbackOnSave: handleSlotsSaveButton,
         building: buildingIndex,
@@ -98,7 +98,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
         cols: 0,
         slots: [],
       });
-      setParkingSlotsDB(updatedParkingSlotsDB);
+      writeIntoPSDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
         callbackOnSave: handleSlotsSaveButton,
         building: selectedBuildingIndex,
@@ -124,7 +124,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
   ) => {
     // UNSOLVED BUILDING PROBLEM! - just add buildings and use Save button, I can see parkingSlots for the latest building is not being appended in the parkingSlotsDB
     // Set the updated parkingSlotsDB state to trigger a re-render
-    setParkingSlotsDB(slotsDB);
+    writeIntoPSDB(slotsDB);
   };
 
   // NEED DESCRIPTION ABOUT THIS
