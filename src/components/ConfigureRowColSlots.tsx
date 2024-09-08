@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../components-styles/ConfigureRowColSlots.css";
-import { IParkingSlotsDB } from "./CreatorPanel";
+import { IParkingSlotsDB } from "./configuration-panel-container";
 export interface IConfigureRowColSlots {
   building: number;
   floor: number;

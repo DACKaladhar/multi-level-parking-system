@@ -14,14 +14,13 @@ export interface IParkingSlotsDB {
   slots: boolean[];
 }
 
-export interface ICreatorPanel {
+export interface IConfigurationPanelContainer {
   parkingSlotsDB: IParkingSlotsDB[][];
   writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => void;
-  handleSubmission: (db: IParkingSlotsDB[][]) => void;
 }
 
 /**
- * The CreatorPanel component is responsible for managing and configuring parking slots
+ * The ConfigurationPanelContainer component is responsible for managing and configuring parking slots
  * across multiple buildings and floors. It integrates with dropdowns for building and floor selection,
  * and re-renders the ConfigureRowColSlots component when the selected building or floor changes.
  *
@@ -30,25 +29,27 @@ export interface ICreatorPanel {
  * @param {React.Dispatch<React.SetStateAction<IParkingSlotsDB[][]>>} props.writeIntoPSDB - Function to update the parking slots database state.
  * @param {(db: IParkingSlotsDB[][]) => void} props.handleSubmission - Callback function that passes the updated parkingSlotsDB to CopmanyPanel.
  *
- * @returns {JSX.Element} The CreatorPanel component.
+ * @returns {JSX.Element} The ConfigurationPanelContainer component.
  */
 
-export const CreatorPanel: React.FC<ICreatorPanel> = ({
-  parkingSlotsDB,
-  writeIntoPSDB,
-  handleSubmission,
-}) => {
+export const ConfigurationPanelContainer: React.FC<
+  IConfigurationPanelContainer
+> = ({ parkingSlotsDB, writeIntoPSDB }) => {
+  const [localPSDB, setLocalPSDB] =
+    useState<IParkingSlotsDB[][]>(parkingSlotsDB);
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
   const [totalBuildings, setTotalBuildings] = useState<number>(
-    parkingSlotsDB.length
+    localPSDB.length
   );
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
-  const [totalFloors, setTotalFloors] = useState<number>(
-    parkingSlotsDB[0].length
-  );
-  const [buildingMapsFloor, setBuildingMapsFloor] = useState<number[]>(
-    mapBuildingsToFloors(parkingSlotsDB)
-  );
+  const [totalFloors, setTotalFloors] = useState<number>(localPSDB[0].length);
+
+  const handleSubmission = (db: IParkingSlotsDB[][]) => {
+    // Submission from the Creator Panel
+    writeIntoPSDB(db);
+
+    // ... you might want to setView also in the future
+  };
 
   const handleBuildingChange = (buildingIndex: number, total: number) => {
     setSelectedBuildingIndex(buildingIndex);
@@ -57,14 +58,11 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       // new building is just added
       setTotalFloors(1);
       setSelectedFloorIndex(0);
-      const updatedB2f = [...buildingMapsFloor];
-      updatedB2f.push(1); // Default to 1 floor for a new building
-      setBuildingMapsFloor(updatedB2f);
       const updatedParkingSlotsDB = [
-        ...parkingSlotsDB,
+        ...localPSDB,
         [{ rows: 0, cols: 0, slots: [] }],
       ];
-      writeIntoPSDB(updatedParkingSlotsDB);
+      setLocalPSDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
         callbackOnSave: handleSlotsSaveButton,
         building: buildingIndex,
@@ -73,13 +71,13 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       });
     } else {
       // changing new building should make floor index default to 0
-      setTotalFloors(buildingMapsFloor[buildingIndex]);
+      setTotalFloors(localPSDB[buildingIndex].length);
       setSelectedFloorIndex(0);
       setSelectedBuildingFloorSlots({
         callbackOnSave: handleSlotsSaveButton,
         building: buildingIndex,
         floor: 0,
-        slotsDB: parkingSlotsDB,
+        slotsDB: localPSDB,
       });
     }
   };
@@ -89,16 +87,13 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
     setTotalFloors(total);
     if (floorIndex + 1 > totalFloors) {
       // new floor is being added
-      const updatedB2f = [...buildingMapsFloor];
-      updatedB2f[selectedBuildingIndex] += 1; // Default to 1 floor for a new building
-      setBuildingMapsFloor(updatedB2f);
-      const updatedParkingSlotsDB = [...parkingSlotsDB];
+      const updatedParkingSlotsDB = [...localPSDB];
       updatedParkingSlotsDB[selectedBuildingIndex].push({
         rows: 0,
         cols: 0,
         slots: [],
       });
-      writeIntoPSDB(updatedParkingSlotsDB);
+      setLocalPSDB(updatedParkingSlotsDB);
       setSelectedBuildingFloorSlots({
         callbackOnSave: handleSlotsSaveButton,
         building: selectedBuildingIndex,
@@ -110,7 +105,7 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
         callbackOnSave: handleSlotsSaveButton,
         building: selectedBuildingIndex,
         floor: floorIndex,
-        slotsDB: parkingSlotsDB,
+        slotsDB: localPSDB,
       });
     }
   };
@@ -122,9 +117,9 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
     building: number,
     floor: number
   ) => {
-    // UNSOLVED BUILDING PROBLEM! - just add buildings and use Save button, I can see parkingSlots for the latest building is not being appended in the parkingSlotsDB
-    // Set the updated parkingSlotsDB state to trigger a re-render
-    writeIntoPSDB(slotsDB);
+    // UNSOLVED BUILDING PROBLEM! - just add buildings and use Save button, I can see parkingSlots for the latest building is not being appended in the localPSDB
+    // Set the updated localPSDB state to trigger a re-render
+    setLocalPSDB(slotsDB);
   };
 
   // NEED DESCRIPTION ABOUT THIS
@@ -133,33 +128,30 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       callbackOnSave: handleSlotsSaveButton,
       building: selectedBuildingIndex,
       floor: selectedFloorIndex,
-      slotsDB: parkingSlotsDB,
+      slotsDB: localPSDB,
     });
 
   return (
     <>
-      <h1 style={{ color: "Red", fontSize: "1.5rem" }}>
-        Creator Panel Body is under development!
+      <h1 style={{ color: "Red", fontSize: "1.5rem", fontWeight: "lighter" }}>
+        Configuration Panel Container is under development!
       </h1>
-      <h5>
-        -need an integration between "[floor, building] dropdowns" and
-        "Configurable parking slots"
+      <h5 style={{ fontWeight: "lighter" }}>
+        - Renders Building Dropdown, Floor Dropdown, Display Configurable Slots
       </h5>
       <nav>
         <div>
-          <>
-            <BuildingDropdown
-              canAddBuilding={true}
-              onBuildingChange={handleBuildingChange}
-              totalBuildings={totalBuildings}
-            />
-            <FloorDropdown
-              canAddFloor={true}
-              onFloorChange={handleFloorChange}
-              selectedFloor={selectedFloorIndex}
-              totalFloors={totalFloors}
-            />
-          </>
+          <BuildingDropdown
+            canAddBuilding={true}
+            onBuildingChange={handleBuildingChange}
+            totalBuildings={totalBuildings}
+          />
+          <FloorDropdown
+            canAddFloor={true}
+            onFloorChange={handleFloorChange}
+            selectedFloor={selectedFloorIndex}
+            totalFloors={totalFloors}
+          />
         </div>
         <div
           style={{
@@ -175,12 +167,4 @@ export const CreatorPanel: React.FC<ICreatorPanel> = ({
       />
     </>
   );
-};
-
-const mapBuildingsToFloors = (db: IParkingSlotsDB[][]): number[] => {
-  const buildingMapsFloor: number[] = [];
-  for (let i = 0; i < db.length; i++) {
-    buildingMapsFloor.push(db[i].length);
-  }
-  return buildingMapsFloor;
 };

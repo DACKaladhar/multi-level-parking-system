@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../components-styles/AvailableSlotsView.css";
-import { IParkingSlotsDB } from "./CreatorPanel";
+import { IParkingSlotsDB } from "./configuration-panel-container";
 import {
   BuildingDropdown,
   FloorDropdown,
