@@ -3,34 +3,49 @@ import { CompanyPanelRenderer } from "./company-panel-renderer";
 import {
   IMaintenanceSlot,
   IMaintenanceSlotType,
+  IParkingSlotsDB,
   MaintenanceStatus,
+  PanelMode,
   ParkingSlotType,
   SecurityType,
   VehicleType,
 } from "./components-common-utils/common-parking-slot.interface";
-import { IParkingSlotsDB } from "./configuration-panel-container";
+
+/**
+ * This is the primary component which handles configuring, maintaining and monitoring
+ * the parking facility of a company.
+ * @returns Application where user can configure, maintain, monitor the parking facility,
+ * and navigate between them using navigation bar .
+ */
 
 export const CompanyPanelContainer: React.FC = () => {
   const [parkingSlotsDB, setParkingSlotsDB] = useState<IParkingSlotsDB[][]>(
     [[{ rows: 0, cols: 0, slots: [] }]] // first time ||
     // fetch from database
-    // dummyParkingSlots()
   );
   const [maintenanceSlotsDB, setMaintenanceSlotsDB] = useState<
     IMaintenanceSlot[][]
   >(
-    syncMaintainanceSlotsDB(parkingSlotsDB) // or fetch from remote database
-    // dummyMaintenanceSlots()
+    syncMaintainanceSlotsDB(parkingSlotsDB) // first tiem ||
+    // fetch from remote database
   );
+  const [panelMode, setPanelMode] = useState<PanelMode>(PanelMode.Monitor);
+
+  const handleNavButtonClick = (selectedState: PanelMode) => {
+    panelMode !== PanelMode.Configure
+      ? setPanelMode(selectedState)
+      : alert("Please submit the slots before changing the mode.");
+  };
 
   const writeIntoPSDB = (psdb: IParkingSlotsDB[][]) => {
     // Write into remote PSdb & if it successfull do below else write failure logic...
     setParkingSlotsDB(psdb);
 
-    // ... write the necessary code after promise db integration (promises resolves)
+    // ... write the necessary code after db updatation (promises resolves)
 
-    // update MSdb on sync with latest PSdb.
+    // update MSdb on sync with latest PSDB and have promises for this as well
     writeIntoMSDB(syncMaintainanceSlotsDB(psdb, maintenanceSlotsDB));
+    setPanelMode(PanelMode.Maintenance);
   };
 
   const writeIntoMSDB = (msdb: IMaintenanceSlot[][]) => {
@@ -40,21 +55,57 @@ export const CompanyPanelContainer: React.FC = () => {
 
   return (
     <>
+      <nav>
+        <button
+          onClick={() => {
+            handleNavButtonClick(PanelMode.Monitor);
+          }}
+        >
+          Monitor State
+        </button>
+        <button
+          onClick={() => {
+            handleNavButtonClick(PanelMode.Configure);
+          }}
+        >
+          Configuration State
+        </button>
+        <button
+          onClick={() => {
+            handleNavButtonClick(PanelMode.Maintenance);
+          }}
+        >
+          Maintenance State
+        </button>
+      </nav>
+
       <CompanyPanelRenderer
         parkingSlotsDB={parkingSlotsDB}
         writeIntoPSDB={writeIntoPSDB}
         maintenanceSlotsDB={maintenanceSlotsDB}
         writeIntoMSDB={writeIntoMSDB}
+        panelMode={panelMode}
       />
+      {/* YOU MUST REMOVE THE BELOW SECTION COMPLETELY LATER! */}
+      {panelMode === PanelMode.Monitor && (
+        <button
+          onClick={() => {
+            setMaintenanceSlotsDB(dummyMaintenanceSlots);
+            setParkingSlotsDB(dummyParkingSlots);
+          }}
+        >
+          TAKE DUMMY SLOTS
+        </button>
+      )}
     </>
   );
 };
 
-// To make MSDB on sync with latest PSDB
 export const syncMaintainanceSlotsDB = (
   parkingSlotsDB: IParkingSlotsDB[][],
   maintenanceSlotsDB?: IMaintenanceSlot[][]
 ): IMaintenanceSlot[][] => {
+  // To make MSDB on sync with updated or latest PSDB
   let resultDB: IMaintenanceSlot[][] = [];
 
   for (let b = 0; b < parkingSlotsDB.length; b++) {
@@ -68,7 +119,6 @@ export const syncMaintainanceSlotsDB = (
         slotNo < parkingSlotsDB[b][f].slots.length;
         slotNo++
       ) {
-        // Store isAvailable for each slot
         const isAvailable =
           !!parkingSlotsDB[b][f].slots[slotNo] ||
           !!maintenanceSlotsDB?.[b]?.[f]?.maintenanceSlots[slotNo]?.isAvailable;
@@ -89,11 +139,10 @@ export const syncMaintainanceSlotsDB = (
           maintenanceStatus: maintenanceStatus,
           securityType: securityType,
           parkingSlotType: parkingSlotType,
-          vehicleType: vehicleType, // initiate all of them with P instead of leaving blank
+          vehicleType: vehicleType,
         });
       }
 
-      // Push the entire floor to the buildingMaintenance array
       buildingMaintenance.push({
         rows: parkingSlotsDB[b][f].rows,
         cols: parkingSlotsDB[b][f].cols,
@@ -101,7 +150,6 @@ export const syncMaintainanceSlotsDB = (
       });
     }
 
-    // Push the buildingMaintenance array to resultDB
     resultDB.push(buildingMaintenance);
   }
 

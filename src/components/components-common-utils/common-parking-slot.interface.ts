@@ -1,3 +1,10 @@
+// Enum to define the possible panel modes of application
+export enum PanelMode {
+  Monitor = 'Monitor', // the daily workplace of company admin
+  Maintenance = 'Maintenance', // user can edit maintenance to slots
+  Configure = 'Configure', // user can actually configure slot structure
+}
+
 // Enum to define possible vehicle types
 export enum VehicleType {
   TwoWheeler = '2-Wheeler',
@@ -34,11 +41,11 @@ export enum SecurityType {
 
 // Interface to define the maintenance slot type
 export interface IMaintenanceSlotType {
-  vehicleType?: VehicleType;             // Optional: Type of vehicle the slot is meant for
-  parkingSlotType?: ParkingSlotType;     // Optional: Type of parking slot
-  maintenanceStatus?: MaintenanceStatus;             // Optional: Type of service associated with the slot
-  securityType?: SecurityType;           // Optional: Security measures associated with the slot
-  isAvailable: boolean;                  // Required: Boolean to determine if the slot is available
+  vehicleType?: VehicleType;
+  parkingSlotType?: ParkingSlotType;
+  maintenanceStatus?: MaintenanceStatus;
+  securityType?: SecurityType;
+  isAvailable: boolean;
 }
 
 // The main DB structure that incorporates maintenance data for each slot
@@ -46,4 +53,10 @@ export interface IMaintenanceSlot {
   rows: number;
   cols: number;
   maintenanceSlots: IMaintenanceSlotType[]; // Array of maintenance slot types for each slot in the floor
+}
+
+export interface IParkingSlotsDB {
+  rows: number;
+  cols: number;
+  slots: boolean[];
 }

@@ -1,8 +1,8 @@
 import {
   IMaintenanceSlot,
   IMaintenanceSlotType,
+  IParkingSlotsDB,
 } from "./components-common-utils/common-parking-slot.interface";
-import { IParkingSlotsDB } from "./configuration-panel-container";
 import { MaintenancePanelRenderer } from "./maintenance-panel-renderer";
 
 export interface IMaintenancePanelContainer {
@@ -10,6 +10,15 @@ export interface IMaintenancePanelContainer {
   maintenanceSlotsDB: IMaintenanceSlot[][];
   writeIntoMSDB: (msdb: IMaintenanceSlot[][]) => void;
 }
+
+/**
+ * This component allows for editing slot properties for each parking facility and updates
+ * the main MSDB via a callback.
+ * @param parkingSlotsDB - The original structure of parking facility
+ * @param maintenanceSlotsDB - The originial properties of each slot, (can change after every edit)
+ * @callback writeIntoMSDB - This callback handles saving the current edits into main database
+ * @returns - A renderer that displays an editable view of the parking facility, enabling users to modify slot properties.
+ */
 
 export const MaintenancePanelContainer: React.FC<
   IMaintenancePanelContainer

@@ -1,10 +1,5 @@
-// import {
-//   BuildingDropdown,
-//   FloorDropdown,
-// } from "./components-common-utils/dynamic-buttons";
-// import { DisplayConfigurableSlots } from "./ConfigureRowColSlots";
-
-export const ConfigureRowColSlots: React.FC = () => {
+// This is under development, will be used from the ConfigurationPanelContainer in future
+export const ConfigurationPanelRenderer: React.FC = () => {
   // __inputs__:
   //   parkingSlotsDB
   //   writeNewParkingSlotsDB

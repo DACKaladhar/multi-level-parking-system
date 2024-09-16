@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { IParkingSlotsDB } from "./configuration-panel-container";
 import {
   IMaintenanceSlotType,
   IMaintenanceSlot,
+  IParkingSlotsDB,
 } from "./components-common-utils/common-parking-slot.interface";
-import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
-import "../components-styles/AvailableSlotsView.css";
+import { ParkingSlotsViewRenderer } from "./parking-slots-view-renderer";
+import "../components-styles/parking-slots-view.css";
 import { MaintenanceModal } from "./maintenance-modal";
 
 interface IMaintenancePanel {
@@ -20,21 +20,13 @@ interface IMaintenancePanel {
     selectedSlot: number
   ) => void;
 }
+
 /**
- * follow ups-
- * have a DB<useState> storing [buildingIndex, floorIndex, rows, cols, deselectedParkingSlots]
- * Re-render new @component ConfigureRowColSlots on floor or building change
- * render save && configure button in ConfigureRowColSlots
- *
- * refactor ConfigureRowColSlots-
- * @render new configure button & save button
- * @prop deselectedParkingSlots, @prop setDeselectedParkingSlots for already saved parking slots
- * @prop row, @prop col- for displaying already saved parking slots
- * @callback save- takes function @params [row, col, deselectedParkingSlots] stores the data into DB
- * save button styling change if already saved and opened.
- * save button styling change if already saved state to edited.
- * @callback configure- should work only if building X floors are saved
- *
+ * A component responsible for editing the properties of parking slots.
+ * @param parkingSlotsDB - Main DB consists the structure of current parking facility
+ * @param maintenanceSlotsDB - Main DB consists of current properties of parkign facility
+ * @callback handleMaintenanceSave - when new properties are assigned to a specific slot
+ * @returns Parking facility view and modal for editing if slot is clicked
  */
 
 export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
@@ -75,7 +67,7 @@ export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
       <h1 style={{ fontWeight: "Lighter" }}>
         Define properties for your slots
       </h1>
-      <AvailableParkingSlotsView
+      <ParkingSlotsViewRenderer
         parkingSlotsDB={parkingSlotsDB}
         onSlotClick={handleSlotClick}
         maintenanceSlotsDB={maintenanceSlotsDB}

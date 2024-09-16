@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { AvailableParkingSlotsView } from "./AvailableParkingSlotsView";
-// import { ConfigureRowColSlots } from "./ConfigureRowColSlots";
+import React from "react";
+import { MonitorPanelContainer } from "./monitor-panel-container";
+import { ConfigurationPanelContainer } from "./configuration-panel-container";
 import {
+  IMaintenanceSlot,
   IParkingSlotsDB,
-  ConfigurationPanelContainer,
-} from "./configuration-panel-container";
-import { IMaintenanceSlot } from "./components-common-utils/common-parking-slot.interface";
+  PanelMode,
+} from "./components-common-utils/common-parking-slot.interface";
 import { MaintenancePanelContainer } from "./maintenance-panel-container";
 
 interface ICompanyPanelRenderer {
@@ -13,45 +13,43 @@ interface ICompanyPanelRenderer {
   writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => void;
   maintenanceSlotsDB: IMaintenanceSlot[][];
   writeIntoMSDB: (msdb: IMaintenanceSlot[][]) => void;
+  panelMode: PanelMode;
 }
+
+/**
+ *
+ * @param parkingSlotsDB - current state of parking facility
+ * @param maintenanceSlotsDB - current state of parking facility slot properties
+ * @param panelMode - selected panel mode by the user
+ * @callback writeIntoPSDB - a callback function which writes the updated parking facility to PSDB
+ * @callback writeIntoMSDB - a callback function which writes the updated maintenance slots database
+ * @returns Conditionally renders the selected panel based on panelMode property
+ */
 
 export const CompanyPanelRenderer: React.FC<ICompanyPanelRenderer> = ({
   parkingSlotsDB,
   writeIntoPSDB,
   maintenanceSlotsDB,
   writeIntoMSDB,
+  panelMode,
 }) => {
-  const [view, setView] = useState<"view" | "config" | "maintenance">("view");
-
-  console.log("parkingSlotsDB", parkingSlotsDB);
-  console.log("maintenanceSlotsDB", maintenanceSlotsDB);
   return (
     <>
-      <nav>
-        <button onClick={() => setView("view")}>View State</button>
-        <button onClick={() => setView("config")}>Configuration State</button>
-        <button onClick={() => setView("maintenance")}>
-          Maintenance State
-        </button>
-      </nav>
-
-      {view === "view" && (
-        <AvailableParkingSlotsView
+      {panelMode === PanelMode.Monitor && (
+        <MonitorPanelContainer
           parkingSlotsDB={parkingSlotsDB}
           maintenanceSlotsDB={maintenanceSlotsDB}
-          onConfigure={() => setView("config")}
-          // onSlotClick={} might need to pass in future after building
         />
       )}
 
-      {view === "config" && (
+      {panelMode === PanelMode.Configure && (
         <ConfigurationPanelContainer
           parkingSlotsDB={parkingSlotsDB}
           writeIntoPSDB={writeIntoPSDB}
         />
       )}
 
-      {view === "maintenance" && (
+      {panelMode === PanelMode.Maintenance && (
         <MaintenancePanelContainer
           parkingSlotsDB={parkingSlotsDB}
           maintenanceSlotsDB={maintenanceSlotsDB}
