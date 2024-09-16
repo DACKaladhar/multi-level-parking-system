@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import "../components-styles/AvailableSlotsView.css";
-import { IParkingSlotsDB } from "./configuration-panel-container";
+import "../components-styles/parking-slots-view.css";
 import {
   BuildingDropdown,
   FloorDropdown,
@@ -8,13 +7,13 @@ import {
 import {
   IMaintenanceSlot,
   IMaintenanceSlotType,
+  IParkingSlotsDB,
   ParkingSlotType,
   VehicleType,
 } from "./components-common-utils/common-parking-slot.interface";
 
-interface IAvailableSlotsViewProps {
+interface IParkingSlotsViewRenderer {
   parkingSlotsDB: IParkingSlotsDB[][];
-  onConfigure?: () => void;
   onSlotClick?: (
     buildingIndex: number,
     floorIndex: number,
@@ -24,43 +23,32 @@ interface IAvailableSlotsViewProps {
 }
 
 /**
- * AvailableParkingSlotsView component displays a grid of parking slots
- * based on the selected building and floor. It also provides an option
- * to configure slots if none are available.
- *
- * @param {IAvailableSlotsViewProps} props
- * @param {IParkingSlotsDB[][]} props.parkingSlotsDB - A 2D array representing the parking slots database, where each element is an object containing rows, cols, and slots.
- * @param {() => void} props.onConfigure - A callback function to switch to the configuration view when slots are not available.
- * @returns {JSX.Element} A grid of available parking slots or a prompt to configure slots.
+ *  A dynamic component that renders a grid of parking slots across
+ * all floors and buildings. It can be utilized anywhere, with
+ * customizable interactions via the onSlotClick Callback.
+ * @param parkingSlotsDB - A 2D array representing the parking slots database, where each element is an object containing rows, cols, and slots.
+ * @param maintenanceSlotsDB - For displaying the slot properties on each respective slot
+ * @callback onSlotClick - A customized callback for handling slot clicks in the view
+ * @returns {JSX.Element} A grid of parking slots are being rendered.
  */
 
-export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
+export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
   parkingSlotsDB,
-  onConfigure,
   onSlotClick,
   maintenanceSlotsDB,
 }) => {
-  // Hooks
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
 
-  // Function definitions
-  const handleBuildingChange = (
-    selectedBuilding: number,
-    totalBuildings: number
-  ): void => {
+  const handleBuildingChange = (selectedBuilding: number): void => {
     setSelectedBuildingIndex(selectedBuilding);
     setSelectedFloorIndex(0);
   };
 
-  const handleFloorChange = (
-    selectedFloor: number,
-    totalFloors: number
-  ): void => {
+  const handleFloorChange = (selectedFloor: number): void => {
     setSelectedFloorIndex(selectedFloor);
   };
 
-  // Component logic
   const buttons = [];
   const rows = parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].rows;
   const cols = parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].cols;
@@ -81,7 +69,6 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
             onSlotClick &&
               onSlotClick(selectedBuildingIndex, selectedFloorIndex, index);
           }}
-          // `url("./public-assets/2wheeler-1.png")`
           style={{
             backgroundImage:
               unavailableSlots[index] &&
@@ -137,12 +124,14 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
   }
 
   return (
-    <div className="ConfigureRowColSlots">
-      <h1>Available Parking Slots</h1>
+    <div className="parking-facility-view">
       <div className="button-row">
         <div className="unique-div">
           {buttons.length > 0 ? (
             <>
+              <h1 style={{ fontWeight: "lighter" }}>
+                Parking Slots of Your Company
+              </h1>
               <BuildingDropdown
                 canAddBuilding={false}
                 onBuildingChange={handleBuildingChange}
@@ -154,14 +143,13 @@ export const AvailableParkingSlotsView: React.FC<IAvailableSlotsViewProps> = ({
                 selectedFloor={selectedFloorIndex}
                 totalFloors={parkingSlotsDB[selectedBuildingIndex].length}
               />
-              {buttons}
+              {buttons} {/** All the slots are being rendered here */}
             </>
           ) : (
             <>
-              <p>Please Configure parking slots.</p>
-              {onConfigure && (
-                <button onClick={onConfigure}>Configure Slots</button>
-              )}
+              <p style={{ fontWeight: "lighter" }}>
+                Please Configure parking slots.
+              </p>
             </>
           )}
         </div>

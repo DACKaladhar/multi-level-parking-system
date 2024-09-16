@@ -20,17 +20,15 @@ export interface IFloorDropdown {
  * @returns - A Building Dropdown component which has ability to add new buildings or just select existing buildings
  */
 export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
-  canAddBuilding = false, // Set default value to false if not passed
+  canAddBuilding = false,
   totalBuildings = 1,
   onBuildingChange,
 }) => {
-  // State to keep track of the buildings
   const [buildings, setBuildings] = useState<string[]>(
     generateBuildingArray(totalBuildings)
   );
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
 
-  // Function to add a new building
   const addBuilding = () => {
     const newBuilding = `Building ${buildings.length + 1}`;
     setBuildings([...buildings, newBuilding]);
@@ -63,7 +61,6 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
           </option>
         ))}
 
-        {/* Conditionally render the "Add a building" option based on canAddBuilding */}
         {canAddBuilding && (
           <>
             <option disabled>──────────</option>
@@ -85,18 +82,16 @@ export const BuildingDropdown: React.FC<IBuildingDropdown> = ({
  * @returns - A FLoor Dropdown component which has ability to add new floors or just select existing floors
  */
 export const FloorDropdown: React.FC<IFloorDropdown> = ({
-  canAddFloor = false, // Set default value to false if not passed
+  canAddFloor = false,
   totalFloors = 1,
   onFloorChange,
   selectedFloor = 0,
 }) => {
-  // State to keep track of the buildings
   const [floors, setFloors] = useState<string[]>(
     generateFloorArray(totalFloors)
   );
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
 
-  // Update selectedFloorIndex when selectedFloor prop changes
   useEffect(() => {
     setSelectedFloorIndex(selectedFloor);
     setFloors(generateFloorArray(totalFloors));
@@ -134,7 +129,6 @@ export const FloorDropdown: React.FC<IFloorDropdown> = ({
           </option>
         ))}
 
-        {/* Conditionally render the "Add a floor" option based on canAddFloor */}
         {canAddFloor && (
           <>
             <option disabled>──────────</option>
