@@ -1,0 +1,125 @@
+/* src/ErrorPage.css */
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  color: #ffffff; /* Light text */
+  text-align: center;
+  padding: 20px;
+}
+
+.error-icon {
+  font-size: 100px; /* Large icon */
+  margin-bottom: 20px;
+  animation: bounce 0.5s infinite alternate; /* Bounce animation */
+}
+
+h1 {
+  font-size: 36px; /* Title size */
+  margin: 10px 0;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); /* Soft glow effect */
+}
+
+p {
+  font-size: 20px; /* Message size */
+  margin: 10px 0;
+  max-width: 500px; /* Limit width for better readability */
+  line-height: 1.5; /* Better line spacing */
+}
+
+.button-container {
+  position: relative;
+  margin-top: 20px;
+}
+
+.retry-button {
+  padding: 15px 30px;
+  font-size: 18px; /* Button text size */
+  color: #ffffff; /* White text */
+  background-color: #e74c3c; /* Button color */
+  border: none;
+  border-radius: 30px; /* Rounded button */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+  position: relative; /* For positioning electron animation */
+}
+
+.retry-button:hover {
+  background-color: #c0392b; /* Darker on hover */
+  transform: translateY(-3px); /* Lift effect on hover */
+}
+
+.electron-animation {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* Prevent interaction */
+  opacity: 0; /* Start invisible */
+  transition: opacity 0.3s;
+}
+
+.retry-button:hover .electron-animation {
+  opacity: 1; /* Show on hover */
+  animation: rotate 1.5s linear infinite; /* Electron rotation animation */
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+@keyframes rotate {
+  0% {
+      transform: rotate(0deg) translateX(30px) rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg) translateX(30px) rotate(-360deg);
+  }
+}
+
+.electron-animation::before, 
+.electron-animation::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8); /* Electron color */
+}
+
+.electron-animation::before {
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: electron 1.5s linear infinite;
+}
+
+.electron-animation::after {
+  width: 8px;
+  height: 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: electron 1.5s linear infinite;
+  animation-delay: 0.75s; /* Delay for second electron */
+}
+
+@keyframes electron {
+  0% {
+      transform: rotate(0deg) translateX(25px) rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg) translateX(25px) rotate(-360deg);
+  }
+}
