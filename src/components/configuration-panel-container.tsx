@@ -3,7 +3,10 @@ import {
   BuildingDropdown,
   FloorDropdown,
 } from "./components-common-utils/dynamic-buttons";
-import { IParkingSlotsDB } from "./components-common-utils/common-parking-slot.interface";
+import {
+  IParkingSlotsDB,
+  WriteIntoPSDBResponse,
+} from "./components-common-utils/common-parking-slot.interface";
 
 interface IDisplayConfigurableSlotsProps {
   rows: number;
@@ -14,7 +17,7 @@ interface IDisplayConfigurableSlotsProps {
 
 export interface IConfigurationPanelContainer {
   parkingSlotsDB: IParkingSlotsDB[][];
-  writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => void;
+  writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => Promise<WriteIntoPSDBResponse>;
 }
 
 /**
@@ -141,12 +144,16 @@ export const ConfigurationPanelContainer: React.FC<
     setLocalPSDB(updatedLocalPSDB);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (): Promise<void> => {
     const result = checkAllConfirmed(confirmedStatus);
     confirmedStatus.length === 0 &&
       setTimeoutText(`Please create your slots first before submit!`);
     if (result[0]) {
-      writeIntoPSDB(localPSDB);
+      const status = await writeIntoPSDB(localPSDB);
+      !status.success &&
+        alert(
+          "Problem encountered configuring parking facility | retry same operation"
+        );
     } else {
       const [unconfirmedBuilding, unconfirmedFloor] = [result[1], result[2]];
       setTimeoutText(

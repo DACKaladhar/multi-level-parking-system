@@ -9,6 +9,8 @@ import {
   ParkingSlotType,
   SecurityType,
   VehicleType,
+  WriteIntoMSDBResponse,
+  WriteIntoPSDBResponse,
 } from "./components-common-utils/common-parking-slot.interface";
 import { ErrorPage, LoadingPage } from "./components-common-utils/common-pages";
 
@@ -36,30 +38,36 @@ export const CompanyPanelContainer: React.FC = () => {
       : alert("Please submit the slots before changing the mode.");
   };
 
-  const writeIntoPSDB = async (psdb: IParkingSlotsDB[][]) => {
+  const writeIntoPSDB = async (
+    psdb: IParkingSlotsDB[][]
+  ): Promise<WriteIntoPSDBResponse> => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/parking-slots", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(psdb),
-      });
+      const msdb = syncMaintainanceSlotsDB(psdb, maintenanceSlotsDB);
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/configure-slots",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ psdb, msdb }),
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to update PSDB");
+      if (!response.ok) throw new Error("Failed to configure slots");
       const result = await response.json();
       console.log(result.message);
       setParkingSlotsDB(psdb);
-      const updatedMaintenanceSlots = syncMaintainanceSlotsDB(
-        psdb,
-        maintenanceSlotsDB
-      );
-      await writeIntoMSDB(updatedMaintenanceSlots);
+      setMaintenanceSlotsDB(msdb);
       setPanelMode(PanelMode.Maintenance);
+      return { success: true, message: result.message };
     } catch (error) {
-      console.error("Error updating PSDB:", error);
+      console.error("Error configuring slots:", error);
+      return { success: false, message: "Failed to Configure Slots" };
     }
   };
 
-  const writeIntoMSDB = async (msdb: IMaintenanceSlot[][]) => {
+  const writeIntoMSDB = async (
+    msdb: IMaintenanceSlot[][]
+  ): Promise<WriteIntoMSDBResponse> => {
     try {
       const response = await fetch(
         "http://127.0.0.1:5000/api/maintenance-slots",
@@ -75,8 +83,10 @@ export const CompanyPanelContainer: React.FC = () => {
       const result = await response.json();
       console.log(result.message);
       setMaintenanceSlotsDB(msdb);
+      return { success: true, message: result.message };
     } catch (error) {
       console.error("Error writing to maintenance slots DB:", error);
+      return { success: false, error: "Failed to update Maintenance Slots" };
     }
   };
 

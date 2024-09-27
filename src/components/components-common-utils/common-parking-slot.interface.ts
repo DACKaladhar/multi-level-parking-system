@@ -60,3 +60,15 @@ export interface IParkingSlotsDB {
   cols: number;
   slots: boolean[];
 }
+
+export interface WriteIntoMSDBResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+export interface WriteIntoPSDBResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}

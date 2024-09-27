@@ -3,6 +3,7 @@ import {
   IMaintenanceSlotType,
   IMaintenanceSlot,
   IParkingSlotsDB,
+  WriteIntoMSDBResponse,
 } from "./components-common-utils/common-parking-slot.interface";
 import { ParkingSlotsViewRenderer } from "./parking-slots-view-renderer";
 import "../components-styles/parking-slots-view.css";
@@ -18,7 +19,7 @@ interface IMaintenancePanel {
     buildingIndex: number,
     floorIndex: number,
     selectedSlot: number
-  ) => void;
+  ) => Promise<WriteIntoMSDBResponse>;
 }
 
 /**
@@ -50,8 +51,10 @@ export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
     setModalOpen(true);
   };
 
-  const handleModalSave = (maintenanceSlot: IMaintenanceSlotType) => {
-    handleMaintenanceSave(
+  const handleModalSave = async (
+    maintenanceSlot: IMaintenanceSlotType
+  ): Promise<WriteIntoMSDBResponse> => {
+    const status = await handleMaintenanceSave(
       parkingSlotsDB,
       maintenanceSlotsDB,
       maintenanceSlot,
@@ -59,7 +62,7 @@ export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
       selectedFloorIndex,
       selectedSlot
     );
-    setModalOpen(false);
+    return status;
   };
 
   return (
