@@ -5,14 +5,16 @@ import {
   IMaintenanceSlot,
   IParkingSlotsDB,
   PanelMode,
+  WriteIntoMSDBResponse,
+  WriteIntoPSDBResponse,
 } from "./components-common-utils/common-parking-slot.interface";
 import { MaintenancePanelContainer } from "./maintenance-panel-container";
 
 interface ICompanyPanelRenderer {
   parkingSlotsDB: IParkingSlotsDB[][];
-  writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => void;
+  writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => Promise<WriteIntoPSDBResponse>;
   maintenanceSlotsDB: IMaintenanceSlot[][];
-  writeIntoMSDB: (msdb: IMaintenanceSlot[][]) => void;
+  writeIntoMSDB: (msdb: IMaintenanceSlot[][]) => Promise<WriteIntoMSDBResponse>;
   panelMode: PanelMode;
 }
 

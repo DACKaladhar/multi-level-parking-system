@@ -5,13 +5,16 @@ import {
   MaintenanceStatus,
   SecurityType,
   IMaintenanceSlotType,
+  WriteIntoMSDBResponse,
 } from "./components-common-utils/common-parking-slot.interface";
 import "../components-styles/maintenance-modal.css";
 
 interface IMaintenanceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (maintenanceSlot: IMaintenanceSlotType) => void;
+  onSave: (
+    maintenanceSlot: IMaintenanceSlotType
+  ) => Promise<WriteIntoMSDBResponse>;
   initialData?: IMaintenanceSlotType;
 }
 
@@ -45,9 +48,13 @@ export const MaintenanceModal: React.FC<IMaintenanceModalProps> = ({
     }));
   };
 
-  const handleSave = () => {
-    onSave(maintenanceSlot);
-    onClose();
+  const handleSave = async () => {
+    const status = await onSave(maintenanceSlot);
+    status.success
+      ? onClose()
+      : alert(
+          "Problem encountered updating the properties | retry same operation"
+        );
   };
 
   if (!isOpen) return null;

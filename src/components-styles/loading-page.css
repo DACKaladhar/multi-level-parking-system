@@ -1,0 +1,96 @@
+/* src/components/components-common-utils/common-pages.tsx */
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+/* The below is the css for Loading page*/
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  background: linear-gradient(135deg, #2c3e50, #bdc3c7); 
+  color: white; 
+  text-align: center;
+}
+
+.orbiting-atom {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  animation: rotate 2s linear infinite; 
+}
+
+.electron {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: #3498db; 
+  border-radius: 50%;
+  animation: orbit 2s linear infinite;
+}
+
+.electron1 {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 0s;
+}
+
+.electron2 {
+  top: 50%;
+  left: 100%;
+  transform: translate(-50%, -50%);
+  animation-delay: 0.67s;
+}
+
+.electron3 {
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 1.33s; 
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(30px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(30px) rotate(-360deg); }
+}
+
+p {
+  margin-top: 20px;
+  font-size: 20px; 
+  opacity: 0.9; 
+  animation: fadeIn 1s ease-in; 
+}
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+    }
+    to {
+      opacity: 0.9;
+    }
+}
+
+@keyframes rotate {
+  0% {
+      transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+}
+
+
+
+/* CSS for ErrorPage */

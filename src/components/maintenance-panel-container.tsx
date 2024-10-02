@@ -2,13 +2,14 @@ import {
   IMaintenanceSlot,
   IMaintenanceSlotType,
   IParkingSlotsDB,
+  WriteIntoMSDBResponse,
 } from "./components-common-utils/common-parking-slot.interface";
 import { MaintenancePanelRenderer } from "./maintenance-panel-renderer";
 
 export interface IMaintenancePanelContainer {
   parkingSlotsDB: IParkingSlotsDB[][];
   maintenanceSlotsDB: IMaintenanceSlot[][];
-  writeIntoMSDB: (msdb: IMaintenanceSlot[][]) => void;
+  writeIntoMSDB: (msdb: IMaintenanceSlot[][]) => Promise<WriteIntoMSDBResponse>;
 }
 
 /**
@@ -23,16 +24,18 @@ export interface IMaintenancePanelContainer {
 export const MaintenancePanelContainer: React.FC<
   IMaintenancePanelContainer
 > = ({ parkingSlotsDB, maintenanceSlotsDB, writeIntoMSDB }) => {
-  const handleMaintenanceSave = (
+  const handleMaintenanceSave = async (
     parkingSlotsDB: IParkingSlotsDB[][],
     maintenanceSlotsDB: IMaintenanceSlot[][],
     editedMaintenanceSlot: IMaintenanceSlotType,
     buildingIndex: number,
     floorIndex: number,
     selectedSlot: number
-  ) => {
+  ): Promise<WriteIntoMSDBResponse> => {
     // Save maintenanceSlot data to maintenanceSlotsDB
-    const updatedMSDB: IMaintenanceSlot[][] = [...maintenanceSlotsDB];
+    const updatedMSDB: IMaintenanceSlot[][] = JSON.parse(
+      JSON.stringify(maintenanceSlotsDB)
+    );
     const previousOptions: IMaintenanceSlotType =
       updatedMSDB[buildingIndex][floorIndex].maintenanceSlots[selectedSlot];
 
@@ -53,7 +56,8 @@ export const MaintenancePanelContainer: React.FC<
 
     updatedMSDB[buildingIndex][floorIndex].maintenanceSlots[selectedSlot] =
       filteredMaintenanceSlot;
-    writeIntoMSDB(updatedMSDB);
+    const status = await writeIntoMSDB(updatedMSDB);
+    return status;
   };
 
   return (
