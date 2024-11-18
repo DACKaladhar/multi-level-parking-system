@@ -32,10 +32,12 @@ export const CompanyPanelContainer: React.FC = () => {
   const [panelMode, setPanelMode] = useState<PanelMode>(PanelMode.Monitor);
 
   const handleNavButtonClick = (selectedState: PanelMode) => {
-    panelMode !== PanelMode.Configure
-      ? setPanelMode(selectedState)
-      : alert("Please submit the slots before changing the mode.");
-  };
+    if (panelMode !== PanelMode.Configure) {
+      setPanelMode(selectedState);
+    } else if (selectedState !== PanelMode.Configure) {
+      alert("Please submit the slots before changing the mode.");
+    }
+  };  
 
   const writeIntoPSDB = (psdb: IParkingSlotsDB[][]) => {
     // Write into remote PSdb & if it successfull do below else write failure logic...
