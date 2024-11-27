@@ -5,37 +5,33 @@ import {
   FloorDropdown,
 } from "./components-common-utils/dynamic-buttons";
 import {
-  IMaintenanceSlot,
+  IBuildingDB,
   IMaintenanceSlotType,
-  IParkingSlotsDB,
   ParkingSlotType,
   VehicleType,
 } from "./components-common-utils/common-parking-slot.interface";
 
 interface IParkingSlotsViewRenderer {
-  parkingSlotsDB: IParkingSlotsDB[][];
   onSlotClick?: (
     buildingIndex: number,
     floorIndex: number,
     slotNumber: number
   ) => void;
-  maintenanceSlotsDB?: IMaintenanceSlot[][];
+  PSDB: IBuildingDB[];
 }
 
 /**
  *  A dynamic component that renders a grid of parking slots across
  * all floors and buildings. It can be utilized anywhere, with
  * customizable interactions via the onSlotClick Callback.
- * @param parkingSlotsDB - A 2D array representing the parking slots database, where each element is an object containing rows, cols, and slots.
- * @param maintenanceSlotsDB - For displaying the slot properties on each respective slot
+ * @param PSDB - A 2D array representing the parking slots database, for displaying the slot properties on each respective slot
  * @callback onSlotClick - A customized callback for handling slot clicks in the view
  * @returns {JSX.Element} A grid of parking slots are being rendered.
  */
 
 export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
-  parkingSlotsDB,
   onSlotClick,
-  maintenanceSlotsDB,
+  PSDB,
 }) => {
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
@@ -50,10 +46,10 @@ export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
   };
 
   const buttons = [];
-  const rows = parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].rows;
-  const cols = parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].cols;
+  const rows = PSDB[selectedBuildingIndex].floors[selectedFloorIndex].rows;
+  const cols = PSDB[selectedBuildingIndex].floors[selectedFloorIndex].cols;
   const unavailableSlots =
-    parkingSlotsDB[selectedBuildingIndex][selectedFloorIndex].slots;
+    PSDB[selectedBuildingIndex].floors[selectedFloorIndex].properties;
 
   for (let i = 0; i < rows; i++) {
     const rowButtons = [];
@@ -63,7 +59,7 @@ export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
         <button
           key={index}
           className={`square-button ${
-            unavailableSlots[index] ? "" : "disappear"
+            unavailableSlots[index].isAvailable ? "" : "disappear"
           }`}
           onClick={() => {
             onSlotClick &&
@@ -71,14 +67,14 @@ export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
           }}
           style={{
             backgroundImage:
-              unavailableSlots[index] &&
-              maintenanceSlotsDB &&
-              maintenanceSlotsDB[selectedBuildingIndex][selectedFloorIndex]
-                ?.maintenanceSlots[index]
+              unavailableSlots[index].isAvailable &&
+              PSDB &&
+              PSDB[selectedBuildingIndex].floors[selectedFloorIndex].properties[
+                index
+              ]
                 ? `url("${getVehicleImageUrl(
-                    maintenanceSlotsDB[selectedBuildingIndex][
-                      selectedFloorIndex
-                    ].maintenanceSlots[index]
+                    PSDB[selectedBuildingIndex].floors[selectedFloorIndex]
+                      .properties[index]
                   )}")`
                 : "none",
             backgroundSize: "contain",
@@ -89,25 +85,19 @@ export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
           <div className="badge-slotType">
             {/* Either only one of below should be displayed */}
             {false && <span className="badge-text"></span>}
-            {unavailableSlots[index] &&
-              maintenanceSlotsDB?.[selectedBuildingIndex]?.[selectedFloorIndex]
-                ?.maintenanceSlots[index].isAvailable &&
-              maintenanceSlotsDB?.[selectedBuildingIndex]?.[selectedFloorIndex]
-                ?.maintenanceSlots[index]?.parkingSlotType && (
+            {unavailableSlots[index].isAvailable &&
+              PSDB[selectedBuildingIndex].floors[selectedFloorIndex].properties[
+                index
+              ].isAvailable &&
+              PSDB[selectedBuildingIndex].floors[selectedFloorIndex].properties[
+                index
+              ]?.parkingSlotType && (
                 // showing badge only if slot is available and parking slot type is defined
                 <img
-                  src={
-                    maintenanceSlotsDB &&
-                    maintenanceSlotsDB[selectedBuildingIndex][
-                      selectedFloorIndex
-                    ]?.maintenanceSlots[index]
-                      ? getSlotTypeImageUrl(
-                          maintenanceSlotsDB[selectedBuildingIndex][
-                            selectedFloorIndex
-                          ].maintenanceSlots[index]
-                        )
-                      : ""
-                  }
+                  src={getSlotTypeImageUrl(
+                    PSDB[selectedBuildingIndex].floors[selectedFloorIndex]
+                      .properties[index]
+                  )}
                   alt=""
                   className="badge-img"
                 />
@@ -135,13 +125,13 @@ export const ParkingSlotsViewRenderer: React.FC<IParkingSlotsViewRenderer> = ({
               <BuildingDropdown
                 canAddBuilding={false}
                 onBuildingChange={handleBuildingChange}
-                totalBuildings={parkingSlotsDB.length}
+                totalBuildings={PSDB.length}
               />
               <FloorDropdown
                 canAddFloor={false}
                 onFloorChange={handleFloorChange}
                 selectedFloor={selectedFloorIndex}
-                totalFloors={parkingSlotsDB[selectedBuildingIndex].length}
+                totalFloors={PSDB[selectedBuildingIndex].floors.length}
               />
               {buttons} {/** All the slots are being rendered here */}
             </>

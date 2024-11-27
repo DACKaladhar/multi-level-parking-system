@@ -3,45 +3,51 @@ import {
   BuildingDropdown,
   FloorDropdown,
 } from "./components-common-utils/dynamic-buttons";
-import { IParkingSlotsDB } from "./components-common-utils/common-parking-slot.interface";
+import {
+  DEFAULTAVAILABLESLOTPROPERTY,
+  IBuildingDB,
+  IMaintenanceSlotType,
+} from "./components-common-utils/common-parking-slot.interface";
 
 interface IDisplayConfigurableSlotsProps {
   rows: number;
   cols: number;
-  unavailableSlots: boolean[];
+  unavailableSlots: IMaintenanceSlotType[];
   handleConfigurableSlotClick: (index: number) => void;
 }
 
 export interface IConfigurationPanelContainer {
-  parkingSlotsDB: IParkingSlotsDB[][];
-  writeIntoPSDB: (psdb: IParkingSlotsDB[][]) => void;
+  PSDB: IBuildingDB[];
+  writeIntoPSDB: (psdb: IBuildingDB[]) => void;
 }
 
 /**
  * The ConfigurationPanelContainer component is responsible for configuring the basic structure of parking slots
  * across multiple buildings and floors. It integrates with dropdowns for building and floor selection.
- * @param parkingSlotsDB - The current state of the parking facility.
+ * @param PSDB - The current state of the parking facility.
  * @param writeIntoPSDB - Function to update the parking facility database state.
  * @returns - Displays configurable view of the parking facility, enabling users structure their parking facility.
  */
 
 export const ConfigurationPanelContainer: React.FC<
   IConfigurationPanelContainer
-> = ({ parkingSlotsDB, writeIntoPSDB }) => {
-  const [localPSDB, setLocalPSDB] = useState<IParkingSlotsDB[][]>(
-    JSON.parse(JSON.stringify(parkingSlotsDB))
+> = ({ PSDB, writeIntoPSDB }) => {
+  const [localPSDB, setLocalPSDB] = useState<IBuildingDB[]>(
+    JSON.parse(JSON.stringify(PSDB))
   );
   const [selectedBuildingIndex, setSelectedBuildingIndex] = useState<number>(0);
   const [totalBuildings, setTotalBuildings] = useState<number>(
     localPSDB.length
   );
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
-  const [totalFloors, setTotalFloors] = useState<number>(localPSDB[0].length);
+  const [totalFloors, setTotalFloors] = useState<number>(
+    localPSDB[0].floors.length
+  );
   const [totRowsIn_BF, setTotRowsIn_BF] = useState<number>(
-    localPSDB[selectedBuildingIndex][selectedFloorIndex].rows
+    localPSDB[selectedBuildingIndex].floors[selectedFloorIndex].rows
   );
   const [totColsIn_BF, setTotColsIn_BF] = useState<number>(
-    localPSDB[selectedBuildingIndex][selectedFloorIndex].cols
+    localPSDB[selectedBuildingIndex].floors[selectedFloorIndex].cols
   );
   const [confirmedStatus, setConfirmedStatus] = useState<boolean[][]>(
     initiateConfirmedButtons(localPSDB)
@@ -59,7 +65,15 @@ export const ConfigurationPanelContainer: React.FC<
       setSelectedFloorIndex(0);
       const updatedLocalPSDB = [
         ...localPSDB,
-        [{ rows: 0, cols: 0, slots: [] }],
+        {
+          floors: [
+            {
+              rows: 0,
+              cols: 0,
+              properties: [],
+            },
+          ],
+        },
       ];
       setLocalPSDB(updatedLocalPSDB);
       const updatedConfirmedStatus = [...confirmedStatus];
@@ -67,10 +81,10 @@ export const ConfigurationPanelContainer: React.FC<
       setConfirmedStatus(updatedConfirmedStatus);
     } else {
       // changing new building should make floor index default to 0
-      setTotalFloors(localPSDB[buildingIndex].length);
+      setTotalFloors(localPSDB[buildingIndex].floors.length);
       setSelectedFloorIndex(0);
-      setTotRowsIn_BF(localPSDB[buildingIndex][0].rows);
-      setTotColsIn_BF(localPSDB[buildingIndex][0].cols);
+      setTotRowsIn_BF(localPSDB[buildingIndex].floors[0].rows);
+      setTotColsIn_BF(localPSDB[buildingIndex].floors[0].cols);
     }
   };
 
@@ -82,18 +96,18 @@ export const ConfigurationPanelContainer: React.FC<
       setTotRowsIn_BF(0);
       setTotColsIn_BF(0);
       const updatedLocalPSDB = [...localPSDB];
-      updatedLocalPSDB[selectedBuildingIndex].push({
+      updatedLocalPSDB[selectedBuildingIndex].floors.push({
         rows: 0,
         cols: 0,
-        slots: [],
+        properties: [],
       });
       setLocalPSDB(updatedLocalPSDB);
       const updatedConfirmedStatus = [...confirmedStatus];
       updatedConfirmedStatus[selectedBuildingIndex].push(false);
       setConfirmedStatus(updatedConfirmedStatus);
     } else {
-      setTotRowsIn_BF(localPSDB[selectedBuildingIndex][floorIndex].rows);
-      setTotColsIn_BF(localPSDB[selectedBuildingIndex][floorIndex].cols);
+      setTotRowsIn_BF(localPSDB[selectedBuildingIndex].floors[floorIndex].rows);
+      setTotColsIn_BF(localPSDB[selectedBuildingIndex].floors[floorIndex].cols);
     }
   };
 
@@ -105,10 +119,13 @@ export const ConfigurationPanelContainer: React.FC<
       setConfirmedStatus(updatedConfirmedStatus);
       setTotRowsIn_BF(value);
       const updatedLocalPSDB = [...localPSDB];
-      updatedLocalPSDB[selectedBuildingIndex][selectedFloorIndex].rows = value;
-      updatedLocalPSDB[selectedBuildingIndex][selectedFloorIndex].slots = Array(
-        value * totColsIn_BF
-      ).fill(true);
+      updatedLocalPSDB[selectedBuildingIndex].floors[selectedFloorIndex].rows =
+        value;
+      updatedLocalPSDB[selectedBuildingIndex].floors[
+        selectedFloorIndex
+      ].properties = Array(value * totColsIn_BF)
+        .fill(null)
+        .map(() => DEFAULTAVAILABLESLOTPROPERTY());
       setLocalPSDB(updatedLocalPSDB);
     }
   };
@@ -121,10 +138,13 @@ export const ConfigurationPanelContainer: React.FC<
       setConfirmedStatus(updatedConfirmedStatus);
       setTotColsIn_BF(value);
       const updatedLocalPSDB = [...localPSDB];
-      updatedLocalPSDB[selectedBuildingIndex][selectedFloorIndex].cols = value;
-      updatedLocalPSDB[selectedBuildingIndex][selectedFloorIndex].slots = Array(
-        totRowsIn_BF * value
-      ).fill(true);
+      updatedLocalPSDB[selectedBuildingIndex].floors[selectedFloorIndex].cols =
+        value;
+      updatedLocalPSDB[selectedBuildingIndex].floors[
+        selectedFloorIndex
+      ].properties = Array(totRowsIn_BF * value)
+        .fill(null)
+        .map(() => DEFAULTAVAILABLESLOTPROPERTY()); // To keep the different memory references for each property we use `map`
       setLocalPSDB(updatedLocalPSDB);
     }
   };
@@ -136,8 +156,11 @@ export const ConfigurationPanelContainer: React.FC<
       setConfirmedStatus(updatedConfirmedStatus);
     }
     const updatedLocalPSDB = [...localPSDB];
-    updatedLocalPSDB[selectedBuildingIndex][selectedFloorIndex].slots[index] =
-      !updatedLocalPSDB[selectedBuildingIndex][selectedFloorIndex].slots[index];
+    updatedLocalPSDB[selectedBuildingIndex].floors[
+      selectedFloorIndex
+    ].properties[index].isAvailable =
+      !updatedLocalPSDB[selectedBuildingIndex].floors[selectedFloorIndex]
+        .properties[index].isAvailable;
     setLocalPSDB(updatedLocalPSDB);
   };
 
@@ -224,7 +247,8 @@ export const ConfigurationPanelContainer: React.FC<
           rows={totRowsIn_BF}
           cols={totColsIn_BF}
           unavailableSlots={
-            localPSDB[selectedBuildingIndex][selectedFloorIndex].slots
+            localPSDB[selectedBuildingIndex].floors[selectedFloorIndex]
+              .properties
           }
           handleConfigurableSlotClick={handleConfigurableSlotClick}
         />
@@ -291,7 +315,7 @@ export const DisplayConfigurableSlots: React.FC<
         <button
           key={index}
           className={`square-button ${
-            unavailableSlots[index] ? "" : "deSelected"
+            unavailableSlots[index].isAvailable ? "" : "deSelected"
           }`}
           onClick={() => handleConfigurableSlotClick(index)}
         >
@@ -309,15 +333,14 @@ export const DisplayConfigurableSlots: React.FC<
   return <div>{buttons}</div>;
 };
 
-const initiateConfirmedButtons = (
-  localPSDB: IParkingSlotsDB[][]
-): boolean[][] => {
+const initiateConfirmedButtons = (localPSDB: IBuildingDB[]): boolean[][] => {
   // fill with true if it's not the first time configuring, else false;
   const fillValue =
-    JSON.stringify(localPSDB) !== `[[{"rows":0,"cols":0,"slots":[]}]]`;
+    JSON.stringify(localPSDB) !==
+    `[{"buildingName":"Building 1","floors":[{"rows":0,"cols":0,"properties":[]}]}]`;
   const result: boolean[][] = [];
   for (let b = 0; b < localPSDB.length; b++) {
-    result.push(Array(localPSDB[b].length).fill(fillValue));
+    result.push(Array(localPSDB[b].floors.length).fill(fillValue));
   }
   return result;
 };
