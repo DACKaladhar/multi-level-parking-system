@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import {
+  IBuildingDB,
   IMaintenanceSlotType,
-  IMaintenanceSlot,
-  IParkingSlotsDB,
 } from "./components-common-utils/common-parking-slot.interface";
 import { ParkingSlotsViewRenderer } from "./parking-slots-view-renderer";
 import "../components-styles/parking-slots-view.css";
 import { MaintenanceModal } from "./maintenance-modal";
 
 interface IMaintenancePanel {
-  parkingSlotsDB: IParkingSlotsDB[][];
-  maintenanceSlotsDB: IMaintenanceSlot[][];
+  PSDB: IBuildingDB[];
   handleMaintenanceSave: (
-    parkingSlotsDB: IParkingSlotsDB[][],
-    maintenanceSlotsDB: IMaintenanceSlot[][],
+    psdb: IBuildingDB[],
     maintenanceSlot: IMaintenanceSlotType,
     buildingIndex: number,
     floorIndex: number,
@@ -23,15 +20,13 @@ interface IMaintenancePanel {
 
 /**
  * A component responsible for editing the properties of parking slots.
- * @param parkingSlotsDB - Main DB consists the structure of current parking facility
- * @param maintenanceSlotsDB - Main DB consists of current properties of parkign facility
+ * @param PSDB - Main DB consists of current structure, properties of parkign facility
  * @callback handleMaintenanceSave - when new properties are assigned to a specific slot
  * @returns Parking facility view and modal for editing if slot is clicked
  */
 
 export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
-  parkingSlotsDB,
-  maintenanceSlotsDB,
+  PSDB,
   handleMaintenanceSave,
 }) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
@@ -52,8 +47,7 @@ export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
 
   const handleModalSave = (maintenanceSlot: IMaintenanceSlotType) => {
     handleMaintenanceSave(
-      parkingSlotsDB,
-      maintenanceSlotsDB,
+      PSDB,
       maintenanceSlot,
       selectedBuildingIndex,
       selectedFloorIndex,
@@ -67,11 +61,7 @@ export const MaintenancePanelRenderer: React.FC<IMaintenancePanel> = ({
       <h1 style={{ fontWeight: "Lighter" }}>
         Define properties for your slots
       </h1>
-      <ParkingSlotsViewRenderer
-        parkingSlotsDB={parkingSlotsDB}
-        onSlotClick={handleSlotClick}
-        maintenanceSlotsDB={maintenanceSlotsDB}
-      />
+      <ParkingSlotsViewRenderer onSlotClick={handleSlotClick} PSDB={PSDB} />
       <MaintenanceModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}

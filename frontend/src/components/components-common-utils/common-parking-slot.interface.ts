@@ -49,14 +49,23 @@ export interface IMaintenanceSlotType {
 }
 
 // The main DB structure that incorporates maintenance data for each slot
-export interface IMaintenanceSlot {
+export interface IFloorDB {
+  floorName?: string
   rows: number;
   cols: number;
-  maintenanceSlots: IMaintenanceSlotType[]; // Array of maintenance slot types for each slot in the floor
+  properties: IMaintenanceSlotType[];
 }
 
-export interface IParkingSlotsDB {
-  rows: number;
-  cols: number;
-  slots: boolean[];
+export interface IBuildingDB {
+  buildingName?: string;
+  floors: IFloorDB[];
 }
+
+export const DEFAULTAVAILABLESLOTPROPERTY = (): IMaintenanceSlotType => {
+  return {
+    isAvailable: true,
+    securityType: SecurityType.Monitored,
+    parkingSlotType: ParkingSlotType.Regular,
+    vehicleType: VehicleType.FourWheeler,
+  };
+};
