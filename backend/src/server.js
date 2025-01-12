@@ -1,22 +1,22 @@
-import express from "express";
+import express from 'express';
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("Server is ready");
+app.get('/', (req, res) => {
+  res.send('Server is ready');
 });
 
 // serve jokes
 
-app.get("/api/jokes", (req, res) => {
+app.get('/api/jokes', (req, res) => {
   const data = [
     {
       id: 1,
-      joke: "I told my wife she should embrace her mistakes. She gave me a hug.",
+      joke: 'I told my wife she should embrace her mistakes. She gave me a hug.',
     },
     {
       id: 2,
-      joke: "Why did the scarecrow win an award? Because he was outstanding in his field.",
+      joke: 'Why did the scarecrow win an award? Because he was outstanding in his field.',
     },
     {
       id: 3,
@@ -28,9 +28,9 @@ app.get("/api/jokes", (req, res) => {
     },
     {
       id: 5,
-      joke: "What do you call a fish wearing a crown? A kingfish.",
+      joke: 'What do you call a fish wearing a crown? A kingfish.',
     },
-  ]
+  ];
   res.send(data);
 });
 
