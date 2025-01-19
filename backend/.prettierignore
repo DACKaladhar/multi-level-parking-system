@@ -1,0 +1,24 @@
+# Ignore artifacts:
+build
+coverage
+node_modules
+/.vscode
+./dist
+
+# Ignore all HTML files:
+*.html
+
+# Ignore specific files:
+src/ignored-file.js
+
+# Ignore all files in a specific directory:
+src/ignored-directory/**
+# Ignore all log files:
+*.log
+
+# Ignore environment variable files:
+.env
+.env.*
+
+# Ignore all JSON files:
+*.json
